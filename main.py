@@ -15,7 +15,7 @@ def fetch_urls():
     db_session = setup_db()
 
     url_finder = UrlFinder(db_session)
-    url_finder.find(100) 
+    url_finder.find() 
 
 
 def scrape_urls():

@@ -18,8 +18,8 @@ $ pip3 install -r requirements.txt
 ## ToDo:
 - add a requirements.txt file (need to setup a venv for this project)
 
-- Write scraper (url_finder) to find URLs that we want to scrape and add them to a queue in the DB
-    - Do a search and add all of the results to the URLs table
+- Write scraper (url_finder) to find URLs that we want to scrape and add them to a queue in the DB ✅
+    - Do a search and add all of the results to the URLs table ✅
 
 
 - Write scraper (url_scraper) for individual zoopla properties 
@@ -38,6 +38,8 @@ $ pip3 install -r requirements.txt
     - write NewWebsiteScraper to scrape the new site for properties
 
 - url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or NewWebsiteScraper
+
+- Scrape images and put in s3 bucket
 
 Extension ideas?
 - Further datasets/websites to scrape and add to the dataset
