@@ -1,7 +1,18 @@
 # property_scraper
 Property Scraper
 
-ToDo:
+## Running the project
+For now just run it as:
+```bash
+$ python main.py
+```
+Needs sqlite3 & sqlalchemy
+
+
+## ToDo:
+
+- add a requirements.txt file (need to setup a venv for this project)
+
 - Write scraper (url_finder) to find URLs that we want to scrape and add them to a queue in the DB
 - Write scraper (url_scraper) for individual zoopla properties 
 - Setup url_scraper to read from the queue and scrape that property
