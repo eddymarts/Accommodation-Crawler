@@ -9,12 +9,22 @@ $ python main.py
 Needs sqlite3 & sqlalchemy
 
 
+## Setting up venv
+```bash
+$ virtualenv env
+$ source env/bin/activate
+$ pip3 install -r requirements.txt
+```
 ## ToDo:
-
 - add a requirements.txt file (need to setup a venv for this project)
 
 - Write scraper (url_finder) to find URLs that we want to scrape and add them to a queue in the DB
+    - Do a search and add all of the results to the URLs table
+
+
 - Write scraper (url_scraper) for individual zoopla properties 
+
+
 - Setup url_scraper to read from the queue and scrape that property
 - Parallelise the url_scraper call so that multiple pages can be scraped at once
 - Store results in DB

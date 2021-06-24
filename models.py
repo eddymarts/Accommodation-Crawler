@@ -45,7 +45,7 @@ class Property(Base):
 class DB_factory():
     def __init__(self, sqlite_filepath="property_db.sqlite3") -> None:
         
-        self.engine = create_engine(f"sqlite:///{sqlite_filepath}", echo=True)
+        self.engine = create_engine(f"sqlite:///{sqlite_filepath}", echo=False)
 
         Base.metadata.create_all(self.engine)
         self.session = sessionmaker(bind=self.engine)
