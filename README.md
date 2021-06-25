@@ -2,11 +2,22 @@
 Property Scraper
 
 ## Running the project
-For now just run it as:
+
+
+The project has two parts:
+
+1. fetching URLs that we want to scrape
+To fetch URLs that we scrape later run:
 ```bash
-$ python main.py
+$  python main.py fetch
 ```
-Needs sqlite3 & sqlalchemy
+
+2. Scraping those URLs
+To scrape the URLs that have been saved for scraping run:
+```bash
+$  python main.py scrape
+```
+
 
 
 ## Setting up venv

@@ -9,7 +9,7 @@ class UrlScraper():
     def save_property(self, property: Property):
         print(f"Saving property: {property}")
 
-    def get_urls_from_db(number_to_scrape):
+    def get_urls_from_db(self, number_to_scrape):
         number_to_scrape
         print("Work in progress")
         return []
