@@ -63,7 +63,7 @@ class PrimeLocationUrlFinder(UrlFinder):
             pl_driver.find_element_by_xpath(f"//div[@class='paginate bg-muted']/a[contains(text(),'{next_page}')]").click()
         else:
             #Go to next search
-            print("ELSE")
+            print("go to next search")
 
         self.save_urls_to_db(to_rent_links)
 
