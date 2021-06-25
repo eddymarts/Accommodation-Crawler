@@ -13,7 +13,7 @@ class UrlToScrape(Base):
     id = Column(Integer, primary_key=True)
     url = Column(String)
     parser_to_use = Column(String) # Category - so we can scrape multiple sites easily -- can just parse the URL when it's fetched
-    scraped_yet = Column(Boolean, default=False, nullable=False)
+    scraped_yet = Column(String, default=False, nullable=False)
     # date_modified = Column(String, nullable=False)
 
     def __repr__(self):

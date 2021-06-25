@@ -45,3 +45,10 @@ Extension ideas?
 - Further datasets/websites to scrape and add to the dataset
 - Time based data so that the same property can be scraped monthly to detect any pricing variations?
 - Frontend with metrics?
+
+- Multithread the fetcher 
+- Multithread the scraper
+
+## Helpful:
+https://www.worthwebscraping.com/how-to-scrape-zoopla-uk-real-estate-property-listings-scraping-using-python/
+https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%20(YouTube%20Version).py (last time i used bs4)

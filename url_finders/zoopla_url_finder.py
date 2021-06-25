@@ -1,24 +1,24 @@
-from models import UrlToScrape
 from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
+from url_finders.url_finder import UrlFinder
 
 # How do you know what you want to scrape
 # https://www.zoopla.co.uk/to-rent/property/london/?page_size=25&price_frequency=per_month&q=london&radius=0&results_sort=newest_listings&pn=2
 areas_of_UK = ["London", "South East England", "East Midlands", "East of England", "North East England", "North West England", "South West England", "West Midlands", "Yorkshire and The Humber", "Isle of Man", "Channel Isles", "Scotland", "Wales", "Northern Ireland"]
 
-class UrlFinder():
+class ZooplaUrlFinder(UrlFinder):
     def __init__(self, db_session) -> None:
-        self.db_session = db_session
-        pass
+        self.parser_to_use = "Zoopla"
+        super().__init__(db_session)
 
-    def current_date(self):
-        # datetime object containing current date and time
-        now = datetime.now()
-        # dd/mm/YY H:M:S
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        dt_string = now.strftime("%d/%m/%Y--%H:%M:%S")
-        return dt_string
+    # def current_date(self):
+    #     # datetime object containing current date and time
+    #     now = datetime.now()
+    #     # dd/mm/YY H:M:S
+    #     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    #     dt_string = now.strftime("%d/%m/%Y--%H:%M:%S")
+    #     return dt_string
 
     def fetch_url(self, url):
         print(url)
@@ -32,16 +32,6 @@ class UrlFinder():
         urls = [f"https://www.zoopla.co.uk{item['href']}" for item in web_page.find_all('a', attrs={'data-testid' : True}) if item['data-testid']=='listing-details-link']
         return urls;
 
-
-    def create_db_object_from_url(self, new_url):
-        new_url_obj = UrlToScrape(
-            url=new_url,
-            parser_to_use='Zoopla',
-            scraped_yet=False
-        )
-
-        self.db_session.add(new_url_obj)
-        self.db_session.commit()
 
 
     def scrape_URLs_for_region(self, region):
@@ -60,14 +50,11 @@ class UrlFinder():
             if len(sub_pages) == 0:
                 end_of_search = True
 
-            for page in sub_pages:
-                self.create_db_object_from_url(page)
+            self.save_urls_to_db(sub_pages)
         print(f"Finished scraping for {region}")
 
     def find(self):
-        
         # finds URLs and saves them to the DB.
         for region in areas_of_UK:
-            urls_for_region = self.scrape_URLs_for_region(region)
+            self.scrape_URLs_for_region(region)
 
-        # self.db_session.commit()

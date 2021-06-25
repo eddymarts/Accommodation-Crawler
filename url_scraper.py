@@ -9,10 +9,16 @@ class UrlScraper():
     def save_property(self, property: Property):
         print(f"Saving property: {property}")
 
+    def get_urls_from_db(number_to_scrape):
+        number_to_scrape
+        print("Work in progress")
+        return []
+
     def scrape(self, number_to_scrape):
-        for i in range(number_to_scrape):
-            print(f"Scraping {i}");
-            # Pick them from the DB and scrape them one by one
+        urls_to_scrape = self.get_urls_from_db(number_to_scrape)
+        for url_obj in urls_to_scrape:
+            url = url_obj.url
+            print(f"Scraping {url}");
 
 
 

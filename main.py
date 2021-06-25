@@ -1,5 +1,7 @@
 import sys
-from url_finder import UrlFinder
+from url_finders.zoopla_url_finder import ZooplaUrlFinder
+from url_finders.prime_location_url_finder import PrimeLocationUrlFinder
+
 from url_scraper import UrlScraper
 
 from models import DB_factory
@@ -14,8 +16,12 @@ def setup_db():
 def fetch_urls():
     db_session = setup_db()
 
-    url_finder = UrlFinder(db_session)
-    url_finder.find() 
+    zoopla_url_finder = ZooplaUrlFinder(db_session)
+    zoopla_url_finder.find()
+
+    prime_location_finder = PrimeLocationUrlFinder(db_session)
+    prime_location_finder.find()
+
 
 
 def scrape_urls():
