@@ -1,5 +1,5 @@
 from models import Property, UrlToScrape
-
+from datetime import datetime
 
 class PropertyScraper():
     def __init__(self, db_session) -> None:
@@ -18,6 +18,17 @@ class PropertyScraper():
         urls = query[:number_to_scrape] # Limit it to just the ones to scrape
         self.mark_as_currently_scraping(urls)
         return urls
+
+    def current_date(self):
+        # datetime object containing current date and time
+        now = datetime.now()
+        return now;
+
+    def save_property(self, property_object):
+        property_object.updated_date=self.current_date();
+        
+        self.db_session.add(property_object)
+        self.db_session.commit()
 
     def scrape(self, number_to_scrape):
         urls_to_scrape = self.get_urls_from_db(number_to_scrape)

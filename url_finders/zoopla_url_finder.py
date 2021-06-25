@@ -12,13 +12,6 @@ class ZooplaUrlFinder(UrlFinder):
         self.parser_to_use = "Zoopla"
         super().__init__(db_session)
 
-    # def current_date(self):
-    #     # datetime object containing current date and time
-    #     now = datetime.now()
-    #     # dd/mm/YY H:M:S
-    #     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    #     dt_string = now.strftime("%d/%m/%Y--%H:%M:%S")
-    #     return dt_string
 
     def fetch_url(self, url):
         print(url)

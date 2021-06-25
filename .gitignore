@@ -60,6 +60,7 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.sqlite3
 
 # Flask stuff:
 instance/
@@ -129,3 +130,4 @@ dmypy.json
 .pyre/
 .vscode/settings.json
 property_db.sqlite3
+property_db copy.sqlite3

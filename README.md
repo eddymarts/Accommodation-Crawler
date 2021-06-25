@@ -36,6 +36,9 @@ $ pip3 install -r requirements.txt
 
 
 - Setup url_scraper to read from the queue and scrape that property
+- Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped
+
+
 - Parallelise the url_scraper call so that multiple pages can be scraped at once
 - Store results in DB
 
@@ -47,7 +50,7 @@ $ pip3 install -r requirements.txt
     - Extend url_scraper to have a ZooplaScraper and a "PrimeLocationScraper" 
     - write PrimeLocationScraper to scrape the new site for properties
 
-- url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or PrimeLocationScraper
+- url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or PrimeLocationScraper ✅
 
 - Scrape images and put in s3 bucket
 
