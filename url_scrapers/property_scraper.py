@@ -32,12 +32,12 @@ class PropertyScraper():
 
     def scrape(self, number_to_scrape):
         urls_to_scrape = self.get_urls_from_db(number_to_scrape)
-        # print(f"{self.property_scraper} -- Need to scrape these URLS:")
+        print(f"{self.property_scraper} -- Need to scrape {len(urls_to_scrape)} URLs")
         # print(urls_to_scrape)
 
         for url_obj in urls_to_scrape:
             url = url_obj.url
-            print(f"Scraping {url}");
+            print(f"{self.property_scraper} scraping url {url}")
             try:
                 self.scrape_url(url)
 

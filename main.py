@@ -2,6 +2,7 @@ import sys
 from url_finders.zoopla_url_finder import ZooplaUrlFinder
 from url_finders.prime_location_url_finder import PrimeLocationUrlFinder
 
+from url_scrapers.zoopla_scraper import ZooplaRentScraper
 from url_scrapers.zoopla_scraper import ZooplaScraper
 from url_scrapers.prime_location_scraper import PrimeLocationScraper
 
@@ -32,11 +33,16 @@ def scrape_urls():
     number_to_scrape = 1000
     while True:
 
+        zoopla_rent_scraper = ZooplaRentScraper(db_session)
+        zoopla_rent_scraper.scrape(number_to_scrape)
+
         zoopla_scraper = ZooplaScraper(db_session)
         zoopla_scraper.scrape(number_to_scrape)
 
         prime_location_scraper = PrimeLocationScraper(db_session)
         prime_location_scraper.scrape(number_to_scrape)
+        
+        # scrape 1000 at a time with a wait in between in-case the queue is empty.
         time.sleep(5)
         print(f"Waiting for 5 seconds before scraping next {number_to_scrape} urls.")
 

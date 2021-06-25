@@ -9,7 +9,7 @@ areas_of_UK = ["London", "South East England", "East Midlands", "East of England
 
 class ZooplaUrlFinder(UrlFinder):
     def __init__(self, db_session) -> None:
-        self.parser_to_use = "Zoopla"
+        self.parser_to_use = "ZooplaRent"
         super().__init__(db_session)
 
 
