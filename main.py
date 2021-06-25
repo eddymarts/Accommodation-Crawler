@@ -2,7 +2,9 @@ import sys
 from url_finders.zoopla_url_finder import ZooplaUrlFinder
 from url_finders.prime_location_url_finder import PrimeLocationUrlFinder
 
-from url_scraper import UrlScraper
+from url_scrapers.zoopla_scraper import ZooplaScraper
+from url_scrapers.prime_location_scraper import PrimeLocationScraper
+
 
 from models import DB_factory
 
@@ -27,8 +29,11 @@ def fetch_urls():
 def scrape_urls():
     db_session = setup_db()
 
-    url_scraper = UrlScraper(db_session)
-    url_scraper.scrape(100)
+    zoopla_scraper = ZooplaScraper(db_session)
+    zoopla_scraper.scrape(10)
+
+    prime_location_scraper = PrimeLocationScraper(db_session)
+    prime_location_scraper.scrape(10)
 
 VALID_ARGUMENTS = ['scrape', 'fetch']
 

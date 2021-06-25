@@ -32,7 +32,6 @@ $ pip3 install -r requirements.txt
 - Write scraper (url_finder) to find URLs that we want to scrape and add them to a queue in the DB ✅
     - Do a search and add all of the results to the URLs table ✅
 
-
 - Write scraper (url_scraper) for individual zoopla properties 
 
 
@@ -42,13 +41,13 @@ $ pip3 install -r requirements.txt
 
 - Shift to using postgresDB on AWS
 
-- Scrape other website beyond Zoopla. 
-    - Find website to scrape
-    - Extend url_finder to also find properties from new-website and add them to the URL queue
-    - Extend url_scraper to have a ZooplaScraper and a "NewWebsiteScraper" 
-    - write NewWebsiteScraper to scrape the new site for properties
+- Scrape other website beyond Zoopla.  ✅
+    - Find website to scrape  ✅
+    - Extend url_finder to also find properties from new-website and add them to the URL queue ✅
+    - Extend url_scraper to have a ZooplaScraper and a "PrimeLocationScraper" 
+    - write PrimeLocationScraper to scrape the new site for properties
 
-- url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or NewWebsiteScraper
+- url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or PrimeLocationScraper
 
 - Scrape images and put in s3 bucket
 
