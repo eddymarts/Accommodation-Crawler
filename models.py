@@ -35,6 +35,7 @@ class Property(Base):
     # area - Square-footage = Column(String)
     area_m_2 = Column(Float)
     number_of_bedrooms = Column(Integer)
+    number_of_bathrooms = Column(Integer)
 
     is_rental = Column(Boolean)
     is_shared_accomodation = Column(Boolean)

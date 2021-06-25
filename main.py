@@ -30,10 +30,10 @@ def scrape_urls():
     db_session = setup_db()
 
     zoopla_scraper = ZooplaScraper(db_session)
-    zoopla_scraper.scrape(10)
+    zoopla_scraper.scrape(100)
 
     prime_location_scraper = PrimeLocationScraper(db_session)
-    prime_location_scraper.scrape(10)
+    prime_location_scraper.scrape(100)
 
 VALID_ARGUMENTS = ['scrape', 'fetch']
 
