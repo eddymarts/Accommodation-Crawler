@@ -18,15 +18,27 @@ def setup_db():
 
 def fetch_urls():
     db_session = setup_db()
+    try:
+        zoopla_url_finder = ZooplaRentUrlFinder(db_session)
+        zoopla_url_finder.find()
+    except Exception as error:
+        print(f"Got error:{error}")
+        print(f"Failed to scrape all ZooplaRentUrls")
 
-    zoopla_url_finder = ZooplaRentUrlFinder(db_session)
-    zoopla_url_finder.find()
+    try:
+        zoopla_url_finder = ZooplaUrlFinder(db_session)
+        zoopla_url_finder.find()
+    except Exception as error:
+        print(f"Got error:{error}")
+        print(f"Failed to scrape all ZooplaBuyUrls")
 
-    zoopla_url_finder = ZooplaUrlFinder(db_session)
-    zoopla_url_finder.find()
+    try:
+        prime_location_finder = PrimeLocationUrlFinder(db_session)
+        prime_location_finder.find()
+    except Exception as error:
+        print(f"Got error:{error}")
+        print(f"Failed to scrape all PrimeLocationUrls")
 
-    prime_location_finder = PrimeLocationUrlFinder(db_session)
-    prime_location_finder.find()
 
 
 
@@ -34,15 +46,26 @@ def scrape_urls():
     db_session = setup_db()
     number_to_scrape = 1000
     while True:
+        try:
+            zoopla_rent_scraper = ZooplaRentScraper(db_session)
+            zoopla_rent_scraper.scrape(number_to_scrape)
+        except Exception as error:
+            print(f"Got error:{error}")
+            print(f"Failed to scrape ZooplaRent URLs")
 
-        zoopla_rent_scraper = ZooplaRentScraper(db_session)
-        zoopla_rent_scraper.scrape(number_to_scrape)
+        try:
+            zoopla_scraper = ZooplaScraper(db_session)
+            zoopla_scraper.scrape(number_to_scrape)
+        except Exception as error:
+            print(f"Got error:{error}")
+            print(f"Failed to scrape ZooplaBuy URLs")
 
-        zoopla_scraper = ZooplaScraper(db_session)
-        zoopla_scraper.scrape(number_to_scrape)
-
-        prime_location_scraper = PrimeLocationScraper(db_session)
-        prime_location_scraper.scrape(number_to_scrape)
+        try:
+            prime_location_scraper = PrimeLocationScraper(db_session)
+            prime_location_scraper.scrape(number_to_scrape)
+        except Exception as error:
+            print(f"Got error:{error}")
+            print(f"Failed to scrape PrimeLocation URLs")
         
         # scrape 1000 at a time with a wait in between in-case the queue is empty.
         time.sleep(5)
