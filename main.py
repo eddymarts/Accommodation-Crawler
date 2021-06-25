@@ -1,9 +1,8 @@
 import sys
-from url_finders.zoopla_url_finder import ZooplaUrlFinder
+from url_finders.zoopla_url_finder import ZooplaUrlFinder, ZooplaRentUrlFinder
 from url_finders.prime_location_url_finder import PrimeLocationUrlFinder
 
-from url_scrapers.zoopla_scraper import ZooplaRentScraper
-from url_scrapers.zoopla_scraper import ZooplaScraper
+from url_scrapers.zoopla_scraper import ZooplaRentScraper, ZooplaScraper
 from url_scrapers.prime_location_scraper import PrimeLocationScraper
 
 
@@ -19,6 +18,9 @@ def setup_db():
 
 def fetch_urls():
     db_session = setup_db()
+
+    zoopla_url_finder = ZooplaRentUrlFinder(db_session)
+    zoopla_url_finder.find()
 
     zoopla_url_finder = ZooplaUrlFinder(db_session)
     zoopla_url_finder.find()

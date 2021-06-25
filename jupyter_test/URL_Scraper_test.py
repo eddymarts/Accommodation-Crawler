@@ -52,18 +52,19 @@ for a in urls:
     print(a['href'])
 
 
-# In[5]:
+# In[54]:
 
 
 
-url = f"https://www.zoopla.co.uk/to-rent/details/58998958/"
+url = f"https://www.zoopla.co.uk/to-rent/details/57420836/"
 print(url)
 
 page = requests.get(url)
 soup = BeautifulSoup(page.content)
+print(page.status_code)
 
 
-# In[6]:
+# In[55]:
 
 
 print(soup)

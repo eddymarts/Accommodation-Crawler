@@ -28,18 +28,14 @@ $ pip3 install -r requirements.txt
 ```
 ## ToDo:
 
-- Write scraper (url_scraper) for individual zoopla properties 
 - write PrimeLocationScraper to scrape PrimeLocation for properties
-
-
-- Setup url_scraper to read from the queue and scrape that property ✅
-    - Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped
 
 - Parallelise the url_scraper call so that multiple pages can be scraped at once
 - Shift to using postgresDB on AWS
 
 
 - Scrape images and put in s3 bucket
+
 
 Extension ideas?
 - Further datasets/websites to scrape and add to the dataset
@@ -68,3 +64,12 @@ https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%
     - Extend url_scraper to have a ZooplaRentScraper and a "PrimeLocationScraper" ✅
 
 - url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or PrimeLocationScraper ✅
+
+- Write scraper (url_scraper) for individual zoopla-rented properties ✅
+
+- url-fetcher should check the DB first, to check if the URL is already in the dataset before saving it. ✅
+
+- Write scraper (url_scraper) for individual zoopla properties ✅
+
+- Setup url_scraper to read from the queue and scrape that property ✅
+    - Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped ✅

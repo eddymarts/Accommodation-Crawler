@@ -9,7 +9,7 @@ areas_of_UK = ["London", "South East England", "East Midlands", "East of England
 
 class ZooplaUrlFinder(UrlFinder):
     def __init__(self, db_session) -> None:
-        self.parser_to_use = "ZooplaRent"
+        self.parser_to_use = "Zoopla"
         super().__init__(db_session)
 
 
@@ -25,7 +25,8 @@ class ZooplaUrlFinder(UrlFinder):
         urls = [f"https://www.zoopla.co.uk{item['href']}" for item in web_page.find_all('a', attrs={'data-testid' : True}) if item['data-testid']=='listing-details-link']
         return urls;
 
-
+    def generate_url_for_region(self, region, page_number):
+        return f"https://www.zoopla.co.uk/for-sale/property/{region}/?page_size=50&q={region}&radius=0&results_sort=newest_listings&pn={page_number}"
 
     def scrape_URLs_for_region(self, region):
         print(f"\n\nBEGINNING SCRAPING FOR {region}\n")
@@ -35,14 +36,13 @@ class ZooplaUrlFinder(UrlFinder):
 
         while not end_of_search:
             page_number = page_number+1
-            url = f"https://www.zoopla.co.uk/to-rent/property/{region}/?page_size=50&price_frequency=per_month&q={region}&radius=0&results_sort=newest_listings&pn={page_number}"
-            
+            url = self.generate_url_for_region(region, page_number)
+
             web_page = self.fetch_url(url)
 
             sub_pages = self.scrape_urls_from_page(web_page)
             if len(sub_pages) == 0:
                 end_of_search = True
-
             self.save_urls_to_db(sub_pages)
         print(f"Finished scraping for {region}")
 
@@ -51,3 +51,11 @@ class ZooplaUrlFinder(UrlFinder):
         for region in areas_of_UK:
             self.scrape_URLs_for_region(region)
 
+
+class ZooplaRentUrlFinder(ZooplaUrlFinder):
+    def __init__(self, db_session) -> None:
+        super().__init__(db_session)
+        self.parser_to_use = "ZooplaRent"
+
+    def generate_url_for_region(self, region, page_number):
+        return f"https://www.zoopla.co.uk/to-rent/property/{region}/?page_size=50&q={region}&radius=0&results_sort=newest_listings&pn={page_number}&price_frequency=per_month"

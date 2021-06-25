@@ -39,7 +39,7 @@ class ZooplaScraper(PropertyScraper):
             for tag in tags:
                 data = tag.get_text()
                 return data
-        finally:
+        except:
             return None
 
     def find_post_code(self, soup):
@@ -51,7 +51,7 @@ class ZooplaScraper(PropertyScraper):
                 data = data.split(',')[-1].strip()
                 data = data.split(' ')[-1]
                 return data
-        finally:
+        except:
             return None
 
     def find_long_lat(self, web_page):
@@ -89,7 +89,7 @@ class ZooplaScraper(PropertyScraper):
                 final_pcm = final_pcm[1:-4]
                 final_pcm = final_pcm.replace(",", "")
                 return float(final_pcm)
-        finally:
+        except:
             return None
 
     def find_number_of_bathrooms(self, soup):
@@ -100,7 +100,7 @@ class ZooplaScraper(PropertyScraper):
                 baths = tag.get_text()
                 baths = baths.split(' ')[0]
                 return baths
-        finally:
+        except:
             return None
 
     def find_number_of_bedrooms(self, soup):
@@ -111,7 +111,7 @@ class ZooplaScraper(PropertyScraper):
                 beds = p.get_text()
                 beds = beds.split(' ')[0]
                 return beds
-        finally:
+        except:
             return None
 
     def find_property_type(self, web_page):
@@ -123,7 +123,8 @@ class ZooplaScraper(PropertyScraper):
 
             for tag in tags:
                 data = tag.get_text(separator="\n")
-        finally:
+                return data
+        except:
             return None
 
     def find_pictures(self, web_page):
@@ -168,3 +169,13 @@ class ZooplaRentScraper(ZooplaScraper):
     
     def find_is_rental(self, web_page):
         return True
+
+    def find_is_shared_accomodation(self, web_page):
+        return None
+
+    def find_is_student(self, web_page):
+        return None
+
+    def find_is_furnished(self, web_page):
+        # https://www.zoopla.co.uk/to-rent/details/54368982/ -- This is furnished -- but would have to parse the description text
+        return None

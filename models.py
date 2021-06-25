@@ -12,7 +12,7 @@ class UrlToScrape(Base):
     __tablename__ = 'urls_to_scrape'
 
     id = Column(Integer, primary_key=True)
-    url = Column(String)
+    url = Column(String,index=True)
     parser_to_use = Column(String) # Category - so we can scrape multiple sites easily -- can just parse the URL when it's fetched
     scraped_yet = Column(String, default=False, nullable=False)
     # date_modified = Column(String, nullable=False)
@@ -26,8 +26,8 @@ class Property(Base):
     __tablename__ = 'properties'
 
     id = Column(Integer, primary_key=True)
-    country = Column(String)
-    city = Column(String)
+    country = Column(String, index=True)
+    city = Column(String, index=True)
     address = Column(String)
     post_code = Column(String) # important one
     long_lat = Column(String)
@@ -42,7 +42,7 @@ class Property(Base):
     is_student = Column(Boolean)
     is_furnished = Column(Boolean)
 
-    price_per_month_gbp = Column(Float)
+    price_per_month_gbp = Column(Float, index=True)
     property_type = Column(String) # Flat/house/detached/semi-detached
     
     url = Column(String)

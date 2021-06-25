@@ -6,17 +6,30 @@ class PropertyScraper():
         self.db_session = db_session
         pass
 
-    def mark_as_currently_scraping(self, url_objects):
-        pass
-        # url_objects.
+    def _mark_url_obj_status(self, url_obj, status):
+        print(f"{url_obj.url} = {status}")
+        url_obj.scraped_yet = status
+        self.db_session.add(url_obj)
+        self.db_session.commit()
+
+    def mark_as_currently_scraping(self, url_obj):
+        self._mark_url_obj_status(url_obj, 'CURRENTLY_SCRAPING')
+
+    def mark_as_finished_scraping(self, url_obj):
+        self._mark_url_obj_status(url_obj, 'FINISHED')
+
+    def mark_as_failed_scraping(self, url_obj):
+        self._mark_url_obj_status(url_obj, 'FAILED')
+
 
     def get_urls_from_db(self, number_to_scrape):
         query = self.db_session.query(UrlToScrape).filter_by(
             parser_to_use=self.property_scraper
+        ).filter_by(
+            scraped_yet=False #default value is false
         )
 
         urls = query[:number_to_scrape] # Limit it to just the ones to scrape
-        self.mark_as_currently_scraping(urls)
         return urls
 
     def current_date(self):
@@ -37,10 +50,13 @@ class PropertyScraper():
 
         for url_obj in urls_to_scrape:
             url = url_obj.url
-            print(f"{self.property_scraper} scraping url {url}")
+            print(f"\n{self.property_scraper} scraping url {url}")
             try:
+                self.mark_as_currently_scraping(url_obj)
                 self.scrape_url(url)
+                self.mark_as_finished_scraping(url_obj)
 
             except Exception as error:
                 print(f"Got error:{error}")
                 print(f"Failed to scrape URL: {url}")
+                self.mark_as_failed_scraping(url_obj)
