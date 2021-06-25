@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql.sqltypes import DateTime, Float
 
 
 Base = declarative_base()
@@ -28,15 +29,26 @@ class Property(Base):
     country = Column(String)
     city = Column(String)
     address = Column(String)
-    post_code = Column(String)
+    post_code = Column(String) # important one
     long_lat = Column(String)
+
     # area - Square-footage = Column(String)
-    area_m_2 = Column(String)
-    price = Column(Integer)
+    area_m_2 = Column(Float)
+    number_of_bedrooms = Column(Integer)
+
+    is_rental = Column(Boolean)
+    is_shared_accomodation = Column(Boolean)
+    is_student = Column(Boolean)
+    is_furnished = Column(Boolean)
+
+    price_per_month_gbp = Column(Float)
     property_type = Column(String) # Flat/house/detached/semi-detached
+    
     url = Column(String)
-    details = Column(String)
+    description = Column(String)
     pictures = Column(String)
+
+    updated_date = Column(DateTime)
 
     def __repr__(self):
        return f"property: {self.name}"
