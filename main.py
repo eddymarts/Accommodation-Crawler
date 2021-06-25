@@ -7,6 +7,7 @@ from url_scrapers.prime_location_scraper import PrimeLocationScraper
 
 
 from models import DB_factory
+import time
 
 
 # https://docs.sqlalchemy.org/en/14/orm/tutorial.html
@@ -28,12 +29,16 @@ def fetch_urls():
 
 def scrape_urls():
     db_session = setup_db()
+    number_to_scrape = 1000
+    while True:
 
-    zoopla_scraper = ZooplaScraper(db_session)
-    zoopla_scraper.scrape(100)
+        zoopla_scraper = ZooplaScraper(db_session)
+        zoopla_scraper.scrape(number_to_scrape)
 
-    prime_location_scraper = PrimeLocationScraper(db_session)
-    prime_location_scraper.scrape(100)
+        prime_location_scraper = PrimeLocationScraper(db_session)
+        prime_location_scraper.scrape(number_to_scrape)
+        time.sleep(5)
+        print(f"Waiting for 5 seconds before scraping next {number_to_scrape} urls.")
 
 VALID_ARGUMENTS = ['scrape', 'fetch']
 

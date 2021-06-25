@@ -14705,14 +14705,16 @@ window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){va
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># price = [item for item in soup.find_all(&#39;a&#39;, attrs={&#39;data-testid&#39; : True}) if item[&#39;data-testid&#39;]==&#39;listing-details-link&#39;]</span>
-<span class="n">prices</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;data-testid&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">})</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;data-testid&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
+<span class="n">prices</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;data-testid&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">})</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;data-testid&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;price&#39;</span> <span class="ow">and</span> <span class="s1">&#39;pcm&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
 
+<span class="n">final_pcm</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prices</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_text</span><span class="p">())</span>
+    <span class="n">final_pcm</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -14734,6 +14736,98 @@ window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){va
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>£1,200 pcm
 £1,200 pcm
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">final_pcm</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>&#39;1,200&#39;</pre>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>&#39;1,200&#39;</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">baths</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;data-testid&#39;</span> <span class="p">:</span> <span class="s1">&#39;baths-label&#39;</span><span class="p">})]</span>
+
+<span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">baths</span><span class="p">:</span>
+    <span class="n">baths</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+    <span class="n">baths</span> <span class="o">=</span> <span class="n">baths</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">baths</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>2
+2
 </pre>
 </div>
 </div>

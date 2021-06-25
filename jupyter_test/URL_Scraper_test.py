@@ -69,14 +69,33 @@ soup = BeautifulSoup(page.content)
 print(soup)
 
 
-# In[7]:
+# In[11]:
 
 
 # price = [item for item in soup.find_all('a', attrs={'data-testid' : True}) if item['data-testid']=='listing-details-link']
-prices = [item for item in soup.find_all('span', attrs={'data-testid' : True}) if item['data-testid']=='price']
+prices = [item for item in soup.find_all('span', attrs={'data-testid' : True}) if item['data-testid']=='price' and 'pcm' in item.text]
 
+final_pcm = None
 for p in prices:
     print(p.get_text())
+    final_pcm = p.get_text()
+
+
+# In[12]:
+
+
+final_pcm[1:-4]
+
+
+# In[24]:
+
+
+baths = [item for item in soup.find_all('span', attrs={'data-testid' : 'baths-label'})]
+
+for tag in baths:
+    baths = tag.get_text()
+    baths = baths.split(' ')[0]
+    print(baths)
 
 
 # In[ ]:
