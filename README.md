@@ -75,6 +75,11 @@ https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%
     - Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped ✅
 
 
+## Extensibility
+To add new scrapers need to add a url-finder that fetches URLs of individual properties to scrape. Along with the type of scraper to use to scrape those individual properties. e.g: url_finders/zoopla_url_finder.py-ZooplaUrlFinder   
+Then need to add a scraper that takes one of those URLs and scrapes it for property details and saves a Property object to the database. e.g: url_scrapers/zoopla_scraper.py-ZooplaScraper
+
+
 ## Helpful SQL:
 ```SQL
 -- if you end a run in the middle of scraping, some results will still be marked as 'CURRENTLY_SCRAPING'
