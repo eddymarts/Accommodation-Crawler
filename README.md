@@ -83,10 +83,9 @@ UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'CURRENTLY_SCRAPIN
 select distinct scraped_yet from urls_to_scrape limit 5;
 
 select count(distinct urls) from urls_to_scrape;
-select count(distinct *) from urls_to_scrape; -- should be the same as the line above
+select count(distinct *) from urls_to_scrape; -- should be the same number as the line above
 
-select count(distinct urls) from urls_to_scrape;
-select count(distinct *) from urls_to_scrape; -- should be the same as the line above
+select count(distinct url) from properties; -- number of distinct properties scraped (some may have accidentally been scraped twice)
 
 ```
 
