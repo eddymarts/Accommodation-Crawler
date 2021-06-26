@@ -6,8 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from pprint import pprint
-# from cities import get_cities
-
+#from cities import get_cities
 from url_finders.url_finder import UrlFinder
 
 class PrimeLocationUrlFinder(UrlFinder):
@@ -25,50 +24,74 @@ class PrimeLocationUrlFinder(UrlFinder):
         wait = WebDriverWait(pl_driver, 10)
         element = wait.until(EC.visibility_of_element_located((By.NAME, "search-form")))
 
+        def more_pages() -> bool:
+            """
+            Checks if there are more pages to scrape.
+
+            INPUT: None
+            OUTPUT: Dictionary with
+                    0: Next page to scrape.
+                    1: True if there are more pages, False otherwise.
+            """
+            next_page = str(int(pl_driver.find_element_by_xpath(
+                "//div[@class='paginate bg-muted']/span[@class='current']").text) + 1)
+            pages = pl_driver.find_elements_by_xpath("//div[@class='paginate bg-muted']/a")
+
+            return {
+                0: next_page,
+                1: next_page in [page.text for page in pages]}
+
+        def click_search():
+            """ Clicks the search button """
+            pl_driver.find_element_by_xpath("//button[@value='Search']").click()
+
+        areas_of_UK = ["London", "South East England", "East Midlands", "East of England", "North East England", "North West England", "South West England", "West Midlands", "Yorkshire and The Humber", "Isle of Man", "Channel Isles", "Scotland", "Wales", "Northern Ireland"]
 
         # Selecting the "To rent" option
-        to_rent = pl_driver.find_element_by_xpath("//option[@value='to-rent']")
-        to_rent.click()
-
+        pl_driver.find_element_by_xpath("//option[@value='to-rent']").click()
 
         # Entering the city
-        search_text = pl_driver.find_element_by_xpath("//input[@id='search-input-location']")
-        search_text.send_keys("London")
-        print("Searching for city London")
-
-        # Clicking the search button
-        search_button = pl_driver.find_element_by_xpath("//button[@value='Search']")
-        search_button.click()
-
+        pl_driver.find_element_by_xpath(
+            "//input[@id='search-input-location']").send_keys(f"{areas_of_UK[-1]}")
+        click_search()
 
         # Selecting the 50 entries per page (maximum)
-        entries_50 = Select(pl_driver.find_element_by_xpath("//select[@name='page_size']"))
-        entries_50.select_by_value(value='50')
-
+        Select(pl_driver.find_element_by_xpath(
+            "//select[@name='page_size']")).select_by_value(value='50')
+        num_links = 50
 
         to_rent_links = []
-        featured_links = pl_driver.find_elements_by_xpath("//ul[@id='featured_listings']/li//div[@class='status-wrapper']/a")
-        for link in featured_links:
-            to_rent_links.append(link.get_attribute("href"))
-        print("Scraped first 50 links")
+        for area in areas_of_UK:
+            # Search each area
+            search_next = pl_driver.find_element_by_xpath("//input[@id='location']")
+            search_next.clear()
+            search_next.send_keys(f"{area}")
+            click_search()
+            print(f"Searching for city {area}")
 
-        links = pl_driver.find_elements_by_xpath("//div[@class='listing-results-wrapper']//a[@class='photo-hover']")
-        for link in links:
-            to_rent_links.append(link.get_attribute("href"))
+            # Getting featured properties links
+            featured_links = pl_driver.find_elements_by_xpath("//ul[@id='featured_listings']/li//div[@class='status-wrapper']/a")
+            for link in featured_links:
+                to_rent_links.append(link.get_attribute("href"))
 
-        # Going to next search page
-        next_page = str(int(pl_driver.find_element_by_xpath("//div[@class='paginate bg-muted']/span[@class='current']").text) + 1)
-        pages = pl_driver.find_elements_by_xpath("//div[@class='paginate bg-muted']/a")
-        if next_page in [page.text for page in pages]:
-            pl_driver.find_element_by_xpath(f"//div[@class='paginate bg-muted']/a[contains(text(),'{next_page}')]").click()
-        else:
-            #Go to next search
-            print("go to next search")
+            # Each city
+            # While there are pages left
+            while True:
+                # Getting all the links
+                links = pl_driver.find_elements_by_xpath("//div[@class='listing-results-wrapper']//a[@class='photo-hover']")
+                for link in links:
+                    to_rent_links.append(link.get_attribute("href"))
+                    #print(link.get_attribute("href"))
+                print(f"Scraped first {num_links}  links")
 
+                # Going to next search page
+                search_pages = more_pages()
+                if search_pages[1]:
+                    pl_driver.find_element_by_xpath(
+                f"//div[@class='paginate bg-muted']\
+/a[contains(text(),'{search_pages[0]}')]").click()
+                else:
+                    break
+                print(f"Scraping page: {search_pages[0]}")
+                num_links += 50
         self.save_urls_to_db(to_rent_links)
-
-
-        # Creating the next search
-        # search_next = pl_driver.find_element_by_xpath("//input[@id='location']")
-        # search_next.clear()
-        # search_next.send_keys("liverpool")
