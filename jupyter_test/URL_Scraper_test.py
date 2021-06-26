@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[1]:
 
 
 areas_of_UK = ["London", "South East England", "East Midlands", "East of England", "North East England", "North West England", "South West England", "West Midlands", "Yorkshire and The Humber", "Isle of Man", "Channel Isles", "Scotland", "Wales", "Northern Ireland"]
 
 
-# In[13]:
+# In[2]:
 
 
 def scrape_URLs_for_region(region):
@@ -24,20 +24,20 @@ def find(number_to_find=None):
 find()    
 
 
-# In[14]:
+# In[ ]:
 
 
 
 
 
-# In[16]:
+# In[3]:
 
 
 from bs4 import BeautifulSoup
 import requests
 
 
-# In[28]:
+# In[4]:
 
 
 
@@ -50,6 +50,53 @@ soup = BeautifulSoup(page.content)
 urls = [item for item in soup.find_all('a', attrs={'data-testid' : True}) if item['data-testid']=='listing-details-link']
 for a in urls:
     print(a['href'])
+
+
+# In[54]:
+
+
+
+url = f"https://www.zoopla.co.uk/to-rent/details/57420836/"
+print(url)
+
+page = requests.get(url)
+soup = BeautifulSoup(page.content)
+print(page.status_code)
+
+
+# In[55]:
+
+
+print(soup)
+
+
+# In[11]:
+
+
+# price = [item for item in soup.find_all('a', attrs={'data-testid' : True}) if item['data-testid']=='listing-details-link']
+prices = [item for item in soup.find_all('span', attrs={'data-testid' : True}) if item['data-testid']=='price' and 'pcm' in item.text]
+
+final_pcm = None
+for p in prices:
+    print(p.get_text())
+    final_pcm = p.get_text()
+
+
+# In[12]:
+
+
+final_pcm[1:-4]
+
+
+# In[24]:
+
+
+baths = [item for item in soup.find_all('span', attrs={'data-testid' : 'baths-label'})]
+
+for tag in baths:
+    baths = tag.get_text()
+    baths = baths.split(' ')[0]
+    print(baths)
 
 
 # In[ ]:

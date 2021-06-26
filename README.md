@@ -27,29 +27,15 @@ $ source env/bin/activate
 $ pip3 install -r requirements.txt
 ```
 ## ToDo:
-- add a requirements.txt file (need to setup a venv for this project)
 
-- Write scraper (url_finder) to find URLs that we want to scrape and add them to a queue in the DB ✅
-    - Do a search and add all of the results to the URLs table ✅
+- write PrimeLocationScraper to scrape PrimeLocation for properties
 
-- Write scraper (url_scraper) for individual zoopla properties 
-
-
-- Setup url_scraper to read from the queue and scrape that property
 - Parallelise the url_scraper call so that multiple pages can be scraped at once
-- Store results in DB
-
 - Shift to using postgresDB on AWS
 
-- Scrape other website beyond Zoopla.  ✅
-    - Find website to scrape  ✅
-    - Extend url_finder to also find properties from new-website and add them to the URL queue ✅
-    - Extend url_scraper to have a ZooplaScraper and a "PrimeLocationScraper" 
-    - write PrimeLocationScraper to scrape the new site for properties
-
-- url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or PrimeLocationScraper
 
 - Scrape images and put in s3 bucket
+
 
 Extension ideas?
 - Further datasets/websites to scrape and add to the dataset
@@ -62,3 +48,28 @@ Extension ideas?
 ## Helpful:
 https://www.worthwebscraping.com/how-to-scrape-zoopla-uk-real-estate-property-listings-scraping-using-python/
 https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%20(YouTube%20Version).py (last time i used bs4)
+
+
+## Done:
+- add a requirements.txt file (need to setup a venv for this project)✅
+
+- Write scraper (url_finder) to find URLs that we want to scrape and add them to a queue in the DB ✅
+    - Do a search and add all of the results to the URLs table ✅
+
+- Store results in DB ✅
+
+- Scrape other website beyond Zoopla.  ✅
+    - Find website to scrape  ✅
+    - Extend url_finder to also find properties from new-website and add them to the URL queue ✅
+    - Extend url_scraper to have a ZooplaRentScraper and a "PrimeLocationScraper" ✅
+
+- url_scraper should pick records from the queue and scrape them with the right scraper either zoopla or PrimeLocationScraper ✅
+
+- Write scraper (url_scraper) for individual zoopla-rented properties ✅
+
+- url-fetcher should check the DB first, to check if the URL is already in the dataset before saving it. ✅
+
+- Write scraper (url_scraper) for individual zoopla properties ✅
+
+- Setup url_scraper to read from the queue and scrape that property ✅
+    - Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped ✅
