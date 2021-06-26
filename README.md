@@ -73,3 +73,19 @@ https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%
 
 - Setup url_scraper to read from the queue and scrape that property ✅
     - Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped ✅
+
+
+## Helpful SQL:
+```SQL
+-- if you end a run in the middle of scraping, some results will still be marked as 'CURRENTLY_SCRAPING'
+-- cleanup with the following:
+UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'CURRENTLY_SCRAPING';
+select distinct scraped_yet from urls_to_scrape limit 5;
+
+select count(distinct urls) from urls_to_scrape;
+select count(distinct *) from urls_to_scrape; -- should be the same as the line above
+
+select count(distinct urls) from urls_to_scrape;
+select count(distinct *) from urls_to_scrape; -- should be the same as the line above
+
+```
