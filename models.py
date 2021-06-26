@@ -18,7 +18,7 @@ class UrlToScrape(Base):
     # date_modified = Column(String, nullable=False)
 
     def __repr__(self):
-       return self.url
+       return f"{self.id}-{self.url}"
 
 
 

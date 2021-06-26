@@ -75,9 +75,9 @@ class PropertyScraper():
     def scrape(self, number_to_scrape):
         urls_to_scrape = self.get_urls_from_db(number_to_scrape)
         print(f"{self.property_scraper} -- Need to scrape {len(urls_to_scrape)} URLs")
-        # print(urls_to_scrape)
+        print(urls_to_scrape)
         
-        def _scrape_url_obj_individual(url_obj, self):
+        def _scrape_url_obj_individual(self, url_obj):
             def _mark_url_obj_status(url_obj, status):
                 print(f"{url_obj.url} = {status}")
                 url_obj.scraped_yet = status
@@ -85,13 +85,13 @@ class PropertyScraper():
                 self.db_session.commit()
 
             def mark_as_currently_scraping(url_obj):
-                self._mark_url_obj_status(url_obj, 'CURRENTLY_SCRAPING')
+                _mark_url_obj_status(url_obj, 'CURRENTLY_SCRAPING')
 
             def mark_as_finished_scraping(url_obj):
-                self._mark_url_obj_status(url_obj, 'FINISHED')
+                _mark_url_obj_status(url_obj, 'FINISHED')
 
             def mark_as_failed_scraping(url_obj):
-                self._mark_url_obj_status(url_obj, 'FAILED')
+                _mark_url_obj_status(url_obj, 'FAILED')
 
             url = url_obj.url
             print(f"\n{self.property_scraper} scraping url {url}")
@@ -106,8 +106,8 @@ class PropertyScraper():
                 mark_as_failed_scraping(url_obj)
 
         # Multithreading
-        multithreaded_scraper = True; # Change this to False if multithreading is causing issues such as concurrency locks
-        # multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
+        # multithreaded_scraper = True; # Change this to False if multithreading is causing issues such as concurrency locks
+        multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
 
         if multithreaded_scraper:
             parmap(lambda i: _scrape_url_obj_individual(self,i), urls_to_scrape)
@@ -115,5 +115,5 @@ class PropertyScraper():
             #     pool.map(partial(_scrape_url_obj_individual, self=self), urls_to_scrape)
         else:
             for url_obj in urls_to_scrape:
-                _scrape_url_obj_individual(url_obj)
+                _scrape_url_obj_individual(self, url_obj)
 
