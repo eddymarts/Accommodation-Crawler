@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 import requests
 
 class ZooplaScraper(PropertyScraper):
-    def __init__(self, db_session) -> None:
-        super().__init__(db_session)
+    def __init__(self, db_factory) -> None:
+        super().__init__(db_factory)
         self.property_scraper= 'Zoopla' 
 
 
@@ -163,8 +163,8 @@ class ZooplaScraper(PropertyScraper):
 
 
 class ZooplaRentScraper(ZooplaScraper):
-    def __init__(self, db_session) -> None:
-        super().__init__(db_session)
+    def __init__(self, db_factory) -> None:
+        super().__init__(db_factory)
         self.property_scraper='ZooplaRent'
     
     def find_is_rental(self, web_page):

@@ -10,7 +10,7 @@ def fun(f, q_in, q_out):
             break
         q_out.put((i, f(x)))
 
-
+# https://stackoverflow.com/questions/3288595/multiprocessing-how-to-use-pool-map-on-a-function-defined-in-a-class
 def parmap(f, X, nprocs=multiprocessing.cpu_count()):
     q_in = multiprocessing.Queue(1)
     q_out = multiprocessing.Queue()
@@ -31,34 +31,22 @@ def parmap(f, X, nprocs=multiprocessing.cpu_count()):
 
 
 class PropertyScraper():
-    def __init__(self, db_session) -> None:
-        self.db_session = db_session
+    def __init__(self, db_factory) -> None:
+        self.db_factory = db_factory
         pass
-
-    # def _mark_url_obj_status(self, url_obj, status):
-    #     print(f"{url_obj.url} = {status}")
-    #     url_obj.scraped_yet = status
-    #     self.db_session.add(url_obj)
-    #     self.db_session.commit()
-
-    # def mark_as_currently_scraping(self, url_obj):
-    #     self._mark_url_obj_status(url_obj, 'CURRENTLY_SCRAPING')
-
-    # def mark_as_finished_scraping(self, url_obj):
-    #     self._mark_url_obj_status(url_obj, 'FINISHED')
-
-    # def mark_as_failed_scraping(self, url_obj):
-    #     self._mark_url_obj_status(url_obj, 'FAILED')
 
 
     def get_urls_from_db(self, number_to_scrape):
-        query = self.db_session.query(UrlToScrape).filter_by(
+        db_session =self.db_factory.get_fresh_session_for_multiprocessing()
+        
+        query = db_session.query(UrlToScrape).filter_by(
             parser_to_use=self.property_scraper
         ).filter_by(
             scraped_yet=False #default value is false
         )
 
         urls = query[:number_to_scrape] # Limit it to just the ones to scrape
+        db_session.close()
         return urls
 
     def current_date(self):
@@ -68,21 +56,27 @@ class PropertyScraper():
 
     def save_property(self, property_object):
         property_object.updated_date=self.current_date();
-        
-        self.db_session.add(property_object)
-        self.db_session.commit()
+
+        db_session = self.db_factory.get_fresh_session_for_multiprocessing()
+
+        db_session.add(property_object)
+        db_session.commit()
+        db_session.close()
 
     def scrape(self, number_to_scrape):
         urls_to_scrape = self.get_urls_from_db(number_to_scrape)
         print(f"{self.property_scraper} -- Need to scrape {len(urls_to_scrape)} URLs")
         print(urls_to_scrape)
         
+        # Define it in here so it isn't defined as an object on the class
         def _scrape_url_obj_individual(self, url_obj):
+            db_session = self.db_factory.get_fresh_session_for_multiprocessing()
+
             def _mark_url_obj_status(url_obj, status):
                 print(f"{url_obj.url} = {status}")
                 url_obj.scraped_yet = status
-                self.db_session.add(url_obj)
-                self.db_session.commit()
+                db_session.add(url_obj)
+                db_session.commit()
 
             def mark_as_currently_scraping(url_obj):
                 _mark_url_obj_status(url_obj, 'CURRENTLY_SCRAPING')
@@ -110,7 +104,8 @@ class PropertyScraper():
         multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
 
         if multithreaded_scraper:
-            parmap(lambda i: _scrape_url_obj_individual(self,i), urls_to_scrape)
+            sub_processes = multiprocessing.cpu_count() - 1 # -1 so it doesn't freeze the whole computer.
+            parmap(lambda i: _scrape_url_obj_individual(self,i), urls_to_scrape, nprocs=sub_processes)
             # with mp.Pool(mp.cpu_count()-1) as pool:
             #     pool.map(partial(_scrape_url_obj_individual, self=self), urls_to_scrape)
         else:

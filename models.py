@@ -4,6 +4,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.sqltypes import DateTime, Float
+from sqlalchemy.pool import QueuePool
 
 
 Base = declarative_base()
@@ -58,10 +59,18 @@ class Property(Base):
 class DB_factory():
     def __init__(self, sqlite_filepath="property_db.sqlite3") -> None:
         
-        self.engine = create_engine(f"sqlite:///{sqlite_filepath}", echo=False)
-
+        self.engine = create_engine(f"sqlite:///{sqlite_filepath}", echo=False, pool_size=20, poolclass=QueuePool)
+        # self.engine = create_engine(f"sqlite:///{sqlite_filepath}", echo=True)
         Base.metadata.create_all(self.engine)
         self.session = sessionmaker(bind=self.engine)
 
     def get_session(self):
         return self.session()
+
+    #need to call engine.dispose() before using in a multithreaded process
+    # More details on sql_alchemy and multiProcessing:
+    # https://docs.sqlalchemy.org/en/14/core/pooling.html#using-connection-pools-with-multiprocessing
+    def get_fresh_session_for_multiprocessing(self):
+        self.engine.dispose()
+        new_session = sessionmaker(bind=self.engine)
+        return new_session()

@@ -15,6 +15,9 @@ def setup_db():
     db = DB_factory()
     return db.get_session();
 
+def setup_pooled_db_for_multitasking():
+    db_factory = DB_factory()
+    return db_factory;
 
 def fetch_urls():
     db_session = setup_db()
@@ -43,25 +46,25 @@ def fetch_urls():
 
 
 def scrape_urls():
-    db_session = setup_db()
+    db_factory = setup_pooled_db_for_multitasking()
     number_to_scrape = 1000
     while True:
         try:
-            zoopla_rent_scraper = ZooplaRentScraper(db_session)
+            zoopla_rent_scraper = ZooplaRentScraper(db_factory)
             zoopla_rent_scraper.scrape(number_to_scrape)
         except Exception as error:
             print(f"Got error:{error}")
             print(f"Failed to scrape ZooplaRent URLs")
 
         try:
-            zoopla_scraper = ZooplaScraper(db_session)
+            zoopla_scraper = ZooplaScraper(db_factory)
             zoopla_scraper.scrape(number_to_scrape)
         except Exception as error:
             print(f"Got error:{error}")
             print(f"Failed to scrape ZooplaBuy URLs")
 
         try:
-            prime_location_scraper = PrimeLocationScraper(db_session)
+            prime_location_scraper = PrimeLocationScraper(db_factory)
             prime_location_scraper.scrape(number_to_scrape)
         except Exception as error:
             print(f"Got error:{error}")
