@@ -47,7 +47,7 @@ def fetch_urls():
 
 def scrape_urls():
     db_factory = setup_pooled_db_for_multitasking()
-    number_to_scrape = 1000
+    number_to_scrape = 10000
     while True:
         try:
             zoopla_rent_scraper = ZooplaRentScraper(db_factory)
@@ -72,7 +72,7 @@ def scrape_urls():
         
         # scrape 1000 at a time with a wait in between in-case the queue is empty.
         time.sleep(5)
-        print(f"Waiting for 5 seconds before scraping next {number_to_scrape} urls.")
+        print(f"\n\nWaiting for 5 seconds before scraping next {number_to_scrape} urls.\n\n")
 
 VALID_ARGUMENTS = ['scrape', 'fetch']
 

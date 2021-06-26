@@ -89,3 +89,20 @@ select count(distinct urls) from urls_to_scrape;
 select count(distinct *) from urls_to_scrape; -- should be the same as the line above
 
 ```
+
+## MacOS multi-threading Issue
+If multi-threading is enabled you may run into an issue on newer versions of macOS
+```
+[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called.
+```
+Details and fix here: 
+https://stackoverflow.com/questions/50168647/multiprocessing-causes-python-to-crash-and-gives-an-error-may-have-been-in-progr
+
+In Bash:
+OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
+In Fish:
+set -x OBJC_DISABLE_INITIALIZE_FORK_SAFETY YES
+
+
+
