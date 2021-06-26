@@ -100,8 +100,8 @@ class PropertyScraper():
                 mark_as_failed_scraping(url_obj)
 
         # Multithreading
-        # multithreaded_scraper = True; # Change this to False if multithreading is causing issues such as concurrency locks
-        multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
+        multithreaded_scraper = True; # Change this to False if multithreading is causing issues such as concurrency locks
+        # multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
 
         if multithreaded_scraper:
             sub_processes = multiprocessing.cpu_count() - 1 # -1 so it doesn't freeze the whole computer.
