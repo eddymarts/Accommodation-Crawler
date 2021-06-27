@@ -40,6 +40,12 @@ class PropertyScraper():
         pass
 
     def create_bucket(self):
+        """
+        Create bucket.
+        
+        UPDATE: Bucket already created.
+        Error handled so that new creations are ignored.
+        """
         self.bucket = "propertydl27060740"
         try:
             self.s3 = boto3.client('s3')
@@ -56,9 +62,18 @@ class PropertyScraper():
             else:
                 raise
     
-    def download_image(self, src, number_of_image):
+    def download_image(self, src: str, number_of_image: int) -> str:
         """
         Saves image of property to file to upload it to S3 afterwards.
+
+        INPUT:
+        src: string containing the url of the image.
+
+        number_of_image: int containing an identifier to store
+                        the image in your computer. The image
+                        will be deleted after uploaded to S3.
+        
+        OUTPUT: path of the image in S3
         """
         image = urllib.request.urlopen(src)
         file = f"image{number_of_image}.jpg"
@@ -67,6 +82,14 @@ class PropertyScraper():
         return self.pictures_to_S3(file)
 
     def pictures_to_S3(self, image):
+        """
+        Uploads image to S3.
+        
+        INPUT:
+        image: string containing file identifier in your folder.
+        
+        OUTPUT: path of the image in S3
+        """
         self.create_bucket()
         files = self.s3.list_objects(Bucket=self.bucket)['Contents']
         paths = [file['Key'] for file in files]
