@@ -73,3 +73,40 @@ https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%
 
 - Setup url_scraper to read from the queue and scrape that property ✅
     - Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped ✅
+
+
+## Extensibility
+To add new scrapers need to add a url-finder that fetches URLs of individual properties to scrape. Along with the type of scraper to use to scrape those individual properties. e.g: url_finders/zoopla_url_finder.py-ZooplaUrlFinder   
+Then need to add a scraper that takes one of those URLs and scrapes it for property details and saves a Property object to the database. e.g: url_scrapers/zoopla_scraper.py-ZooplaScraper
+
+
+## Helpful SQL:
+```SQL
+-- if you end a run in the middle of scraping, some results will still be marked as 'CURRENTLY_SCRAPING'
+-- cleanup with the following:
+UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'CURRENTLY_SCRAPING';
+select distinct scraped_yet from urls_to_scrape limit 5;
+
+select count(distinct urls) from urls_to_scrape;
+select count(distinct *) from urls_to_scrape; -- should be the same number as the line above
+
+select count(distinct url) from properties; -- number of distinct properties scraped (some may have accidentally been scraped twice)
+
+```
+
+## MacOS multi-threading Issue
+If multi-threading is enabled you may run into an issue on newer versions of macOS
+```
+[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called.
+```
+Details and fix here: 
+https://stackoverflow.com/questions/50168647/multiprocessing-causes-python-to-crash-and-gives-an-error-may-have-been-in-progr
+
+In Bash:
+OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
+In Fish:
+set -x OBJC_DISABLE_INITIALIZE_FORK_SAFETY YES
+
+
+
