@@ -31,7 +31,8 @@ class Property(Base):
     city = Column(String, index=True)
     address = Column(String)
     post_code = Column(String) # important one
-    long_lat = Column(String)
+    longitude = Column(float)
+    latitude = Column(float)
 
     # area - Square-footage = Column(String)
     area_m_2 = Column(Float)

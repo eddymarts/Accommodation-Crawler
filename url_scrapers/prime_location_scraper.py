@@ -187,7 +187,7 @@ class PrimeLocationScraper(PropertyScraper):
                 price_per_sqft = int(price_description.split()[1].translate(
                     {ord(i): '' for i in '(£,/sq.'}))
 
-        latitude, longitude, gmaps_link = self.get_maps()
+        la, lo, gmaps_link = self.get_maps()
 
         all_details = [property_details] + [
             property_description] + property_features + property_info
@@ -209,7 +209,8 @@ class PrimeLocationScraper(PropertyScraper):
             city= addres.split(", ")[-1].split()[0], # Not always get the city
             address=addres,
             post_code=addres.split(", ")[-1].split()[1],
-            long_lat=str(longitude)+", "+str(latitude),
+            longitude=lo,
+            latitude=la,
 
             area_m_2=0.092903*area_sqft,
             number_of_bedrooms=bedrooms,
