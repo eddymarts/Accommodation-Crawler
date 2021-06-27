@@ -10,6 +10,14 @@ class PrimeLocationScraper(PropertyScraper):
     def __init__(self, db_session) -> None:
         self.property_scraper='PrimeLocation'
         super().__init__(db_session)
+
+    def quit_popup_alert(self) -> None:
+        """ Removes the popup alert from the search browser. """
+        try:
+            self.driver.find_element_by_xpath(
+                "//div[@class='alerts-popup-wrapper']//a[@href='#']").click()
+        except Exception:
+            pass
     
     def get_area_sqft(self) -> int:
         """
@@ -114,7 +122,7 @@ class PrimeLocationScraper(PropertyScraper):
             longitude: float
             Google Maps link: string
         """
-
+        self.quit_popup_alert()
         self.driver.find_element_by_xpath("//li[@aria-controls='tab-map']").click()
         self.wait = WebDriverWait(self.driver, 10)
         gmaps_link = self.wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='gm-style']//a[@title=\
