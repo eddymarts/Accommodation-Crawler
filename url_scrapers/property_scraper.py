@@ -113,8 +113,7 @@ class PropertyScraper():
 
     def current_date(self):
         # datetime object containing current date and time
-        now = datetime.now()
-        return now;
+        return datetime.now()
 
     def save_property(self, property_object):
         property_object.updated_date=self.current_date();
@@ -172,7 +171,7 @@ class PropertyScraper():
 
         if multithreaded_scraper:
             sub_processes = multiprocessing.cpu_count() - 1 # -1 so it doesn't freeze the whole computer.
-            parmap(lambda i: _scrape_url_obj_individual(self,i), urls_to_scrape, nprocs=sub_processes)
+            parmap(lambda url: _scrape_url_obj_individual(self,url), urls_to_scrape, nprocs=sub_processes)
 
         else:
             for url_obj in urls_to_scrape:

@@ -164,8 +164,8 @@ class ZooplaScraper(PropertyScraper):
 
         )
         
-        print(f"Saving:\n{scraped_property}")
-        # self.save_property(scraped_property)
+        # print(f"Saving:\n{scraped_property}")
+        self.save_property(scraped_property)
 
 
 
@@ -186,22 +186,11 @@ class ZooplaRentScraper(ZooplaScraper):
     def find_is_furnished(self, web_page):
         # https://www.zoopla.co.uk/to-rent/details/54368982/ -- This is furnished -- but would have to parse the description text
         return None
+
     def find_buy_price_gbp(self, soup):
         return None
 
     def find_price_per_month_gbp(self, soup):
-        try:
-            prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'}) if 'pcm' in item.text]
-
-            for p in prices:
-                final_pcm = p.get_text()
-                final_pcm = final_pcm[1:-4]
-                final_pcm = final_pcm.replace(",", "")
-                return float(final_pcm)
-        except:
-            return None
-
-    def find_buy_price_gbp(self, soup):
         try:
             prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'}) if 'pcm' in item.text]
 
