@@ -1,5 +1,4 @@
 from selenium import webdriver
-import selenium
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -157,7 +156,26 @@ class PrimeLocationScraper(PropertyScraper):
         return agent, agent_phone_number
 
     def find_pictures(self):
-        return None
+        num_pictures = int(self.driver.find_element_by_xpath(
+            "//div[@id='images-tally']").text.rstrip().split()[-1])
+        
+        path = ""
+        while True:
+            downloaded_image = int(self.driver.find_element_by_xpath(
+                "//span[@id='images-num']").text)
+
+            src = self.driver.find_element_by_xpath(
+                "//div[@id='images-main']//img").get_attribute("src")
+
+            # download the image
+            path = path + self.download_image(src, downloaded_image) + ", "
+        
+            if downloaded_image >= num_pictures:
+                break
+
+            self.quit_popup_alert()
+            self.driver.find_element_by_xpath("//a[@id='images-nav-next']").click()
+        return path
 
     def scrape_url(self, url):
         # Open browser
@@ -208,6 +226,7 @@ class PrimeLocationScraper(PropertyScraper):
                 price_per_sqft = int(price_description.split()[1].translate(
                     {ord(i): '' for i in '(£,/sq.'}))
 
+        picture = self.find_pictures()
         la, lo, gmaps_link = self.get_maps()
 
         all_details = [property_details] + [
@@ -251,7 +270,7 @@ class PrimeLocationScraper(PropertyScraper):
             agency=agent,
             agency_phone_number=agent_phone_number,
             google_maps =gmaps_link,
-            pictures=self.find_pictures()
+            pictures=picture
         )
 
         # Save to database

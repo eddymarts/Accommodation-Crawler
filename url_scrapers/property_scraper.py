@@ -2,6 +2,10 @@ from models import Property, UrlToScrape
 from datetime import datetime
 import multiprocessing
 from functools import partial
+import urllib.request
+import boto3
+import os
+from pprint import pprint
 
 def fun(f, q_in, q_out):
     while True:
@@ -34,6 +38,51 @@ class PropertyScraper():
     def __init__(self, db_factory) -> None:
         self.db_factory = db_factory
         pass
+
+    def create_bucket(self):
+        self.bucket = "propertydl27060740"
+        try:
+            self.s3 = boto3.client('s3')
+            self.s3.create_bucket(
+                ACL='public-read-write',
+                Bucket=self.bucket,
+                CreateBucketConfiguration={
+                    'LocationConstraint': 'eu-west-2'
+                })
+
+        except Exception as error:
+            if "BucketAlreadyExists" in str(error) or "BucketAlreadyOwnedByYou" in str(error):
+                pass
+            else:
+                raise
+    
+    def download_image(self, src, number_of_image):
+        """
+        Saves image of property to file to upload it to S3 afterwards.
+        """
+        image = urllib.request.urlopen(src)
+        file = f"image{number_of_image}.jpg"
+        with open(f"{file}", "wb") as f:
+            f.write(image.read())
+        return self.pictures_to_S3(file)
+
+    def pictures_to_S3(self, image):
+        self.create_bucket()
+        files = self.s3.list_objects(Bucket=self.bucket)['Contents']
+        paths = [file['Key'] for file in files]
+        
+        number = 1
+        while True:
+            path = f"/images/image{number}.jpg"
+            if path in paths:
+                number += 1
+            else:
+                break
+        self.s3r = boto3.resource('s3')
+        self.s3r.meta.client.upload_file(
+            image, self.bucket, path)
+        os.remove(image)
+        return path
 
 
     def get_urls_from_db(self, number_to_scrape):
