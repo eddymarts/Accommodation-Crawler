@@ -2,6 +2,10 @@ from models import Property, UrlToScrape
 from datetime import datetime
 import multiprocessing
 from functools import partial
+import urllib.request
+import boto3
+import os
+from pprint import pprint
 
 def fun(f, q_in, q_out):
     while True:
@@ -34,6 +38,65 @@ class PropertyScraper():
     def __init__(self, db_factory) -> None:
         self.db_factory = db_factory
         pass
+
+    def create_bucket(self):
+        """
+        Create bucket.
+        
+        UPDATE: Bucket already created.
+        Error handled so that new creations are ignored.
+        """
+        self.bucket = "propertydl27060740"
+        try:
+            self.s3 = boto3.client('s3')
+            self.s3.create_bucket(
+                ACL='public-read-write',
+                Bucket=self.bucket,
+                CreateBucketConfiguration={
+                    'LocationConstraint': 'eu-west-2'
+                })
+
+        except Exception as error:
+            if "BucketAlreadyExists" in str(error) or "BucketAlreadyOwnedByYou" in str(error):
+                pass
+            else:
+                raise
+    
+    def download_image(self, src: str, number_of_image: int) -> str:
+        """
+        Saves image of property to file to upload it to S3 afterwards.
+
+        INPUT:
+        src: string containing the url of the image.
+
+        number_of_image: int containing an identifier to store
+                        the image in your computer. The image
+                        will be deleted after uploaded to S3.
+        
+        OUTPUT: path of the image in S3
+        """
+        image = urllib.request.urlopen(src)
+        file = f"image{number_of_image}.jpg"
+        with open(f"{file}", "wb") as f:
+            f.write(image.read())
+        return self.pictures_to_S3(file)
+
+    def pictures_to_S3(self, image):
+        """
+        Uploads image to S3.
+        
+        INPUT:
+        image: string containing file identifier in your folder.
+        
+        OUTPUT: path of the image in S3
+        """
+        self.create_bucket()
+        path = f"/images/{self.property_id}{image}"
+        self.s3r = boto3.resource('s3')
+        self.s3r.meta.client.upload_file(
+            image, self.bucket, path)
+        os.remove(image)
+        return path
 
 
     def get_urls_from_db(self, number_to_scrape):
@@ -88,6 +151,11 @@ class PropertyScraper():
                 _mark_url_obj_status(url_obj, 'FAILED')
 
             url = url_obj.url
+
+            # Modify property_id in each scraper subclass to generate
+            # a unique identifier for each property.
+            # This will be used in the bucket path.
+            self.property_id = url
             print(f"\n{self.property_scraper} scraping url {url}")
             try:
                 mark_as_currently_scraping(url_obj)

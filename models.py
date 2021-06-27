@@ -31,7 +31,8 @@ class Property(Base):
     city = Column(String, index=True)
     address = Column(String)
     post_code = Column(String) # important one
-    long_lat = Column(String)
+    longitude = Column(Float)
+    latitude = Column(Float)
 
     # area - Square-footage = Column(String)
     area_m_2 = Column(Float)
@@ -43,12 +44,16 @@ class Property(Base):
     is_student = Column(Boolean)
     is_furnished = Column(Boolean)
 
+    price_for_sale = Column(Float, index=True)
     price_per_month_gbp = Column(Float, index=True)
     price_to_buy_gbp = Column(Float, index=True)
     property_type = Column(String) # Flat/house/detached/semi-detached
     
     url = Column(String)
     description = Column(String)
+    agency = Column(String)
+    agency_phone_number = Column(String)
+    google_maps = Column(String)
     pictures = Column(String)
 
     updated_date = Column(DateTime)
