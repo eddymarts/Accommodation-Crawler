@@ -106,8 +106,7 @@ class PropertyScraper():
         if multithreaded_scraper:
             sub_processes = multiprocessing.cpu_count() - 1 # -1 so it doesn't freeze the whole computer.
             parmap(lambda i: _scrape_url_obj_individual(self,i), urls_to_scrape, nprocs=sub_processes)
-            # with mp.Pool(mp.cpu_count()-1) as pool:
-            #     pool.map(partial(_scrape_url_obj_individual, self=self), urls_to_scrape)
+
         else:
             for url_obj in urls_to_scrape:
                 _scrape_url_obj_individual(self, url_obj)

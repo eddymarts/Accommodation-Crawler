@@ -85,12 +85,23 @@ Then need to add a scraper that takes one of those URLs and scrapes it for prope
 -- if you end a run in the middle of scraping, some results will still be marked as 'CURRENTLY_SCRAPING'
 -- cleanup with the following:
 UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'CURRENTLY_SCRAPING';
+UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'FAILED';
+
 select distinct scraped_yet from urls_to_scrape limit 5;
 
 select count(distinct urls) from urls_to_scrape;
 select count(distinct *) from urls_to_scrape; -- should be the same number as the line above
 
 select count(distinct url) from properties; -- number of distinct properties scraped (some may have accidentally been scraped twice)
+
+-- How many not scraped
+ select count(url) from urls_to_scrape
+ where url not in (select distinct url from properties);
+
+
+-- clean data
+delete from properties where price_per_month_gbp is NULL;
+delete from properties where description is NULL;
 
 ```
 

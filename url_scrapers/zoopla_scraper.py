@@ -81,14 +81,17 @@ class ZooplaScraper(PropertyScraper):
         return None
 
     def find_price_per_month_gbp(self, soup):
-        try:
-            prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'}) if 'pcm' in item.text]
+        return None
 
-            for p in prices:
-                final_pcm = p.get_text()
-                final_pcm = final_pcm[1:-4]
-                final_pcm = final_pcm.replace(",", "")
-                return float(final_pcm)
+    def find_buy_price_gbp(self, soup):
+        try:
+            prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'})]
+
+            for price in prices:
+                data = price.get_text()
+                data = data[1:]
+                data = data.replace(',','')
+                return data
         except:
             return None
 
@@ -149,7 +152,9 @@ class ZooplaScraper(PropertyScraper):
             is_student= self.find_is_student(web_page),
             is_furnished= self.find_is_furnished(web_page),
 
-            price_per_month_gbp= self.find_price_per_month_gbp(web_page),
+            price_per_month_gbp=self.find_price_per_month_gbp(web_page),
+            price_to_buy_gbp=self.find_buy_price_gbp(web_page),
+            
             property_type= self.find_property_type(web_page),
             
             url= url,
@@ -157,8 +162,9 @@ class ZooplaScraper(PropertyScraper):
             pictures= self.find_pictures(web_page),
 
         )
-
-        self.save_property(scraped_property)
+        
+        print(f"Saving:\n{scraped_property}")
+        # self.save_property(scraped_property)
 
 
 
@@ -179,3 +185,29 @@ class ZooplaRentScraper(ZooplaScraper):
     def find_is_furnished(self, web_page):
         # https://www.zoopla.co.uk/to-rent/details/54368982/ -- This is furnished -- but would have to parse the description text
         return None
+    def find_buy_price_gbp(self, soup):
+        return None
+
+    def find_price_per_month_gbp(self, soup):
+        try:
+            prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'}) if 'pcm' in item.text]
+
+            for p in prices:
+                final_pcm = p.get_text()
+                final_pcm = final_pcm[1:-4]
+                final_pcm = final_pcm.replace(",", "")
+                return float(final_pcm)
+        except:
+            return None
+
+    def find_buy_price_gbp(self, soup):
+        try:
+            prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'}) if 'pcm' in item.text]
+
+            for p in prices:
+                final_pcm = p.get_text()
+                final_pcm = final_pcm[1:-4]
+                final_pcm = final_pcm.replace(",", "")
+                return float(final_pcm)
+        except:
+            return None

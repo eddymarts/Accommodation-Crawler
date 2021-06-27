@@ -44,6 +44,7 @@ class Property(Base):
     is_furnished = Column(Boolean)
 
     price_per_month_gbp = Column(Float, index=True)
+    price_to_buy_gbp = Column(Float, index=True)
     property_type = Column(String) # Flat/house/detached/semi-detached
     
     url = Column(String)
@@ -53,7 +54,29 @@ class Property(Base):
     updated_date = Column(DateTime)
 
     def __repr__(self):
-       return f"property: {self.name}"
+       return f"""Property: 
+        id -- {self.id}
+        country -- {self.country}
+        city -- {self.city}
+        address -- {self.address}
+        post_code -- {self.post_code}
+        long_lat -- {self.long_lat}
+
+        area_m_2 -- {self.area_m_2}
+        number_of_bedrooms -- {self.number_of_bedrooms}
+        number_of_bathrooms -- {self.number_of_bathrooms}
+        is_rental -- {self.is_rental}
+        is_shared_accomodation -- {self.is_shared_accomodation}
+        is_student -- {self.is_student}
+        is_furnished -- {self.is_furnished}
+        price_per_month_gbp -- {self.price_per_month_gbp}
+        price_to_buy_gbp -- {self.price_to_buy_gbp}
+        property_type -- {self.property_type}
+        url -- {self.url}
+        description -- {self.description[:15]}
+        pictures -- {self.pictures}
+        updated_date -- {self.updated_date}
+       """
 
 
 class DB_factory():
