@@ -23,6 +23,7 @@ class PrimeLocationScraper(PropertyScraper):
             area_sqft = "NaN"
 
         return area_sqft
+
     def get_property_features(self) -> list:
         """
         Returns property features.
@@ -81,45 +82,27 @@ class PrimeLocationScraper(PropertyScraper):
 
         return bedrooms, bathrooms, receptions
 
-    def get_furnished_shared_student(self, all_details: list) -> tuple:
+    def get_furnished_shared_student(self, description: str) -> tuple:
         """
         Returns tuple of bools as follows:
         INPUT: all_details: list of strings, All details of the property
 
         OUTPUT:
-            is_furnished: bool
+            is_furnish: bool
             is_shared: bool
-            is_student: bool
+            is_stud: bool
         """
-
-        furnished = 0
-        unfurnished = 0
-        shared = 0
-        no_student = 0
-
-        for detail in all_details:
-            if "unfurnished" in detail.lower() or "no furnished" in detail.lower():
-                unfurnished += 1
-            elif "furnished" in detail.lower():
-                furnished += 1
-            
-            if "shared" in detail.lower():
-                shared += 1
-            
-            if "no student" in detail.lower() or "not for student" in detail.lower():
-                no_student += 1
-        
-        if unfurnished:
-            is_furnished = False
-        elif furnished:
-            is_furnished = True
+        if "unfurnished" in description or "no furnished" in description:
+            is_furnish = False
+        elif "furnished" in description:
+            is_furnish = True
         else:
-            is_furnished = "NaN"
+            is_furnish = "NaN"
         
-        is_shared = shared > 0
-        is_student = no_student == 0
-            
-        return is_furnished, is_shared, is_student
+        is_shared = "shared" in description
+        is_stud = not("no student" in description or "not for student" in description)
+        
+        return is_furnish, is_shared, is_stud
 
     def get_maps(self) -> tuple:
         """
@@ -152,9 +135,10 @@ class PrimeLocationScraper(PropertyScraper):
         
         return agent, agent_phone_number
 
+    def find_pictures(self):
+        return None
+
     def scrape_url(self, url):
-        ##print(f"TODO {self.property_scraper}: scrape url {url}")
-        
         # Open browser
         self.driver = webdriver.Chrome()
 
@@ -173,15 +157,15 @@ class PrimeLocationScraper(PropertyScraper):
         property_details = self.driver.find_element_by_xpath(
         "//h1[@class='listing-details-h1']").text
 
-        is_rental = "to rent" in property_details.lower()
+        is_rent = "to rent" in property_details.lower()
 
         price_description = self.driver.find_element_by_xpath(
             "//span[@class='price']").text
         
-        if is_rental:
+        if is_rent:
             price_for_sale = "NaN"
             price_for_sqft = "NaN"
-            property_type, address = property_details.split(" to rent in ")
+            propert_type, addres = property_details.split(" to rent in ")
             if price_description == "POA":
                 price_per_month = "NaN"
                 price_per_week = "NaN"
@@ -193,7 +177,7 @@ class PrimeLocationScraper(PropertyScraper):
         else:
             price_per_month = "NaN"
             price_per_week = "NaN"
-            property_type, address = property_details.split(" for sale in ")
+            propert_type, addres = property_details.split(" for sale in ")
             if price_description == "POA":
                 price_for_sale = "NaN"
                 price_for_sqft = "NaN"
@@ -202,15 +186,15 @@ class PrimeLocationScraper(PropertyScraper):
                     {ord(i): '' for i in '£,'}))
                 price_per_sqft = int(price_description.split()[1].translate(
                     {ord(i): '' for i in '(£,/sq.'}))
-
+        
         all_details = [property_details] + [
             property_description] + property_features + property_info
-        is_furnished, is_shared, is_student = self.get_furnished_shared_student(all_details)
         
-        # Not always gets the city
-        city, post_code = address.split(", ")[-1].split()
-        latitude, longitude, gmaps_link = self.get_maps()
-        country = 'GB'
+        complete_description = " | "
+        for detail in all_details:
+            complete_description += detail + " | "
+
+        is_furnish, is_shared, is_stud = self.get_furnished_shared_student(complete_description)
         
         # Close tab
         self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 'w')
@@ -218,28 +202,29 @@ class PrimeLocationScraper(PropertyScraper):
         # Close browser
         self.driver.close()
 
-    # id = Column(Integer, primary_key=True)
-    # country = Column(String, index=True) DONE
-    # city = Column(String, index=True) DONE
-    # address = Column(String) Done
-    # post_code = Column(String) Done
-    # long_lat = Column(String) DONE
+        scraped_property = Property(
+            country='GB',
+            city= addres.split(", ")[-1].split()[0], # Not always get the city
+            address=addres,
+            post_code=addres.split(", ")[-1].split()[1],
+            long_lat=str(longitude)+", "+str(latitude),
 
-    # # area_sqft - Square-footage = Column(String) DONE
-    # area_m_2 = Column(Float)
-    # number_of_bedrooms = Column(Integer) DONE
-    # number_of_bathrooms = Column(Integer) DONE
+            area_m_2=0.092903*area_sqft,
+            number_of_bedrooms=bedrooms,
+            number_of_bathrooms=bathrooms,
 
-    # is_rental = Column(Boolean) DONE
-    # is_shared_accomodation = Column(Boolean) DONE
-    # is_student = Column(Boolean) DONE
-    # is_furnished = Column(Boolean) DONE
+            is_rental=is_rent,
+            is_shared_accomodation=is_shared,
+            is_student=is_stud,
+            is_furnished=is_furnish,
 
-    # price_per_month_gbp = Column(Float, index=True) DONE
-    # property_details = Column(String) # Flat/house/detached/semi-detached DONE
-    
-    # url = Column(String) DONE
-    # description = Column(String) DONE
-    # pictures = Column(String)
+            price_per_month_gbp=price_per_month,
+            property_type=propert_type,
+            
+            url= url,
+            description=complete_description,
+            pictures= self.find_pictures(),
+        )
 
-    # updated_date = Column(DateTime)
+        # Save to database
+        self.save_property(scraped_property)
