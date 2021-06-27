@@ -5,7 +5,6 @@ from functools import partial
 import urllib.request
 import boto3
 import os
-from pprint import pprint
 
 def fun(f, q_in, q_out):
     while True:

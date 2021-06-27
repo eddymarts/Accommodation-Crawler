@@ -56,11 +56,11 @@ class ZooplaScraper(PropertyScraper):
 
     def find_long_lat(self, web_page):
         return None
-        tags = [item for item in soup.find_all('img', attrs={'data-testid' : 'static-google-map'})]
+        # tags = [item for item in soup.find_all('img', attrs={'data-testid' : 'static-google-map'})]
 
-        for tag in tags:
-            data = tag['src']
-            # From the source can extract the centre == Long/lat -- but the googlemap isn't loading
+        # for tag in tags:
+        #     data = tag['src']
+        # From the source can extract the centre == Long/lat -- but the googlemap isn't loading
 
 
     def find_area_m_2(self, web_page):
@@ -141,7 +141,8 @@ class ZooplaScraper(PropertyScraper):
             city= self.find_city(web_page),
             address= self.find_address(web_page),
             post_code= self.find_post_code(web_page),
-            long_lat= self.find_long_lat(web_page),
+            longitude= self.find_long_lat(web_page),
+            latitude= self.find_long_lat(web_page),
 
             area_m_2= self.find_area_m_2(web_page),
             number_of_bedrooms= self.find_number_of_bedrooms(web_page),
@@ -153,7 +154,7 @@ class ZooplaScraper(PropertyScraper):
             is_furnished= self.find_is_furnished(web_page),
 
             price_per_month_gbp=self.find_price_per_month_gbp(web_page),
-            price_to_buy_gbp=self.find_buy_price_gbp(web_page),
+            price_for_sale=self.find_buy_price_gbp(web_page),
             
             property_type= self.find_property_type(web_page),
             

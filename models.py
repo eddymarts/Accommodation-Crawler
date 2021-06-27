@@ -46,7 +46,7 @@ class Property(Base):
 
     price_for_sale = Column(Float, index=True)
     price_per_month_gbp = Column(Float, index=True)
-    price_to_buy_gbp = Column(Float, index=True)
+
     property_type = Column(String) # Flat/house/detached/semi-detached
     
     url = Column(String)
@@ -65,7 +65,8 @@ class Property(Base):
         city -- {self.city}
         address -- {self.address}
         post_code -- {self.post_code}
-        long_lat -- {self.long_lat}
+        longitude -- {self.longitude}
+        latitude -- {self.latitude}
 
         area_m_2 -- {self.area_m_2}
         number_of_bedrooms -- {self.number_of_bedrooms}
@@ -75,7 +76,7 @@ class Property(Base):
         is_student -- {self.is_student}
         is_furnished -- {self.is_furnished}
         price_per_month_gbp -- {self.price_per_month_gbp}
-        price_to_buy_gbp -- {self.price_to_buy_gbp}
+        price_for_sale -- {self.price_for_sale}
         property_type -- {self.property_type}
         url -- {self.url}
         description -- {self.description[:15]}
