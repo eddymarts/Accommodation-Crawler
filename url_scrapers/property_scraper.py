@@ -91,16 +91,7 @@ class PropertyScraper():
         OUTPUT: path of the image in S3
         """
         self.create_bucket()
-        files = self.s3.list_objects(Bucket=self.bucket)['Contents']
-        paths = [file['Key'] for file in files]
-        
-        number = 1
-        while True:
-            path = f"/images/image{number}.jpg"
-            if path in paths:
-                number += 1
-            else:
-                break
+        path = f"/images/{self.property_id}{image}"
         self.s3r = boto3.resource('s3')
         self.s3r.meta.client.upload_file(
             image, self.bucket, path)
@@ -160,6 +151,11 @@ class PropertyScraper():
                 _mark_url_obj_status(url_obj, 'FAILED')
 
             url = url_obj.url
+
+            # Modify property_id in each scraper subclass to generate
+            # a unique identifier for each property.
+            # This will be used in the bucket path.
+            self.property_id = url
             print(f"\n{self.property_scraper} scraping url {url}")
             try:
                 mark_as_currently_scraping(url_obj)

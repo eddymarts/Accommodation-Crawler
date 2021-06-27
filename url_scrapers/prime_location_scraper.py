@@ -181,6 +181,9 @@ class PrimeLocationScraper(PropertyScraper):
         # Open browser
         self.driver = webdriver.Chrome()
 
+        # Unique identifier used for identifying buckets
+        self.property_id = "PrimeLocation/" + url.split("details/")[1].split("/")[0] + "/"
+
         # Open new tab
         self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 't')
         self.driver.get(url)
