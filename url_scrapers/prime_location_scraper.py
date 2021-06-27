@@ -182,11 +182,13 @@ class PrimeLocationScraper(PropertyScraper):
                 price_for_sale = "NaN"
                 price_for_sqft = "NaN"
             else:
-                price_for_sale = int(price_description.split()[0].translate(
+                price_sale = int(price_description.split()[0].translate(
                     {ord(i): '' for i in '£,'}))
                 price_per_sqft = int(price_description.split()[1].translate(
                     {ord(i): '' for i in '(£,/sq.'}))
-        
+
+        latitude, longitude, gmaps_link = self.get_maps()
+
         all_details = [property_details] + [
             property_description] + property_features + property_info
         
@@ -218,12 +220,16 @@ class PrimeLocationScraper(PropertyScraper):
             is_student=is_stud,
             is_furnished=is_furnish,
 
+            price_for_sale = price_sale,
             price_per_month_gbp=price_per_month,
             property_type=propert_type,
             
             url= url,
             description=complete_description,
-            pictures= self.find_pictures(),
+            agency = agent,
+            agency_phone_number = agent_phone_number,
+            google_maps = gmaps_link
+            pictures= self.find_pictures()
         )
 
         # Save to database

@@ -43,11 +43,15 @@ class Property(Base):
     is_student = Column(Boolean)
     is_furnished = Column(Boolean)
 
+    price_for_sale = Column(Float, index=True)
     price_per_month_gbp = Column(Float, index=True)
     property_type = Column(String) # Flat/house/detached/semi-detached
     
     url = Column(String)
     description = Column(String)
+    agency = Column(String)
+    agency_phone_number = Column(String)
+    google_maps = Column(String)
     pictures = Column(String)
 
     updated_date = Column(DateTime)
