@@ -136,7 +136,7 @@ class PrimeLocationScraper(PropertyScraper):
         return agent, agent_phone_number
 
     def find_pictures(self):
-        return None
+        return 45
 
     def scrape_url(self, url):
         # Open browser
@@ -226,10 +226,10 @@ class PrimeLocationScraper(PropertyScraper):
             
             url= url,
             description=complete_description,
-            agency = agent,
-            agency_phone_number = agent_phone_number,
-            google_maps = gmaps_link
-            pictures= self.find_pictures()
+            agency=agent,
+            agency_phone_number=agent_phone_number,
+            google_maps =gmaps_link,
+            pictures=self.find_pictures()
         )
 
         # Save to database
