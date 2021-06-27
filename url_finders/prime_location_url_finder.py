@@ -59,4 +59,4 @@ page_size=50&search_source=refine&radius=0&view_type=grid&pn={page}")
         self.driver.close()
 
         # Save to database
-        self.save_urls_to_db(self.property_links.values)
+        self.save_urls_to_db(self.property_links.values())
