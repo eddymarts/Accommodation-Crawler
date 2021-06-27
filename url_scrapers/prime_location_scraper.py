@@ -1,4 +1,5 @@
 from selenium import webdriver
+import selenium
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -100,6 +101,8 @@ class PrimeLocationScraper(PropertyScraper):
             is_shared: bool
             is_stud: bool
         """
+        description = description.lower()
+
         if "unfurnished" in description or "no furnished" in description:
             is_furnish = False
         elif "furnished" in description:
@@ -122,13 +125,16 @@ class PrimeLocationScraper(PropertyScraper):
             longitude: float
             Google Maps link: string
         """
-        self.quit_popup_alert()
-        self.driver.find_element_by_xpath("//li[@aria-controls='tab-map']").click()
-        self.wait = WebDriverWait(self.driver, 10)
-        gmaps_link = self.wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='gm-style']//a[@title=\
-'Open this area in Google Maps (opens a new window)']"))).get_attribute("href")
-        latitude, longitude = [float(coord) for coord in
-            gmaps_link.split("ll=")[1].split("&")[0].split(",")]
+        try:
+            self.quit_popup_alert()
+            self.driver.find_element_by_xpath("//li[@aria-controls='tab-map']").click()
+            self.wait = WebDriverWait(self.driver, 10)
+            gmaps_link = self.wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='gm-style']//a[@title=\
+    'Open this area in Google Maps (opens a new window)']"))).get_attribute("href")
+            latitude, longitude = [float(coord) for coord in
+                gmaps_link.split("ll=")[1].split("&")[0].split(",")]
+        except:
+            latitude, longitude, gmaps_link = "NaN", "NaN", "NaN"
         
         return latitude, longitude, gmaps_link
 
@@ -136,15 +142,22 @@ class PrimeLocationScraper(PropertyScraper):
         """
         Returns agency name and phone number.
         """
-        agent = self.driver.find_element_by_xpath(
-            "//div[@id='listings-agent']//p//a").text
-        agent_phone_number = self.driver.find_element_by_xpath(
-            "//span[@class='agent_phone']/a").text.translate({ord(' '): ''})
+        try:
+            agent = self.driver.find_element_by_xpath(
+                "//div[@id='listings-agent']//p//a").text
+        except:
+            agent = "NaN"
+        
+        try:
+            agent_phone_number = self.driver.find_element_by_xpath(
+                "//span[@class='agent_phone']/a").text.translate({ord(' '): ''})
+        except:
+            agent_phone_number = "NaN"
         
         return agent, agent_phone_number
 
     def find_pictures(self):
-        return 45
+        return None
 
     def scrape_url(self, url):
         # Open browser
@@ -174,7 +187,7 @@ class PrimeLocationScraper(PropertyScraper):
             price_for_sale = "NaN"
             price_for_sqft = "NaN"
             propert_type, addres = property_details.split(" to rent in ")
-            if price_description == "POA":
+            if "POA" in price_description.upper():
                 price_per_month = "NaN"
                 price_per_week = "NaN"
             else:
@@ -186,7 +199,7 @@ class PrimeLocationScraper(PropertyScraper):
             price_per_month = "NaN"
             price_per_week = "NaN"
             propert_type, addres = property_details.split(" for sale in ")
-            if price_description == "POA":
+            if "POA" in price_description.upper():
                 price_for_sale = "NaN"
                 price_for_sqft = "NaN"
             else:
