@@ -23,10 +23,10 @@ page_size=50&search_source=refine&radius=0&view_type=grid&pn={page}")
             links = self.driver.find_elements_by_xpath(
 "//div[@class='listing-results-wrapper']//a[@class='photo-hover']")
             if links:
-                for link in links:
-                    self.property_links[self.link_number] = link.get_attribute("href")
-                    self.link_number += 1
-                print(f"Page {page}: Scraped first {len(self.property_links)} links.")
+                # Save to database
+                self.save_urls_to_db([link.get_attribute("href") for link in links])
+                self.link_number += len(links)
+                print(f"Page {page}: Scraped first {self.link_number} links.")
                 page += 1
             else: # End of search
                 # Close tab
@@ -39,7 +39,6 @@ page_size=50&search_source=refine&radius=0&view_type=grid&pn={page}")
         """
         Finds all property links in PrimeLocation.com and saves it to local database.
         """
-        self.property_links = {}
         self.link_number = 0
 
         # Open browser
@@ -57,6 +56,3 @@ page_size=50&search_source=refine&radius=0&view_type=grid&pn={page}")
 
         # Close browser
         self.driver.close()
-
-        # Save to database
-        self.save_urls_to_db(self.property_links.values())
