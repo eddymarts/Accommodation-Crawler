@@ -6,27 +6,31 @@ from selenium.webdriver.common.keys import Keys
 from models import Property
 from url_scrapers.property_scraper import PropertyScraper
 
+
 class PrimeLocationScraper(PropertyScraper):
     def __init__(self, db_session) -> None:
-        self.property_scraper='PrimeLocation'
+        self.property_scraper = "PrimeLocation"
         super().__init__(db_session)
 
     def quit_popup_alert(self) -> None:
-        """ Removes the popup alert from the search browser. """
+        """Removes the popup alert from the search browser."""
         try:
             self.driver.find_element_by_xpath(
-                "//div[@class='alerts-popup-wrapper']//a[@href='#']").click()
+                "//div[@class='alerts-popup-wrapper']//a[@href='#']"
+            ).click()
         except Exception:
             pass
-    
+
     def get_area_sqft(self) -> int:
         """
         Returns area as an integer in squared feet.
         """
         try:
-            area_sqft = int(self.driver.find_element_by_xpath(
-            "//span[@class='num-icon num-sqft ']").text.split()[0].translate(
-                    {ord(','): ''}))
+            area_sqft = int(
+                self.driver.find_element_by_xpath("//span[@class='num-icon num-sqft ']")
+                .text.split()[0]
+                .translate({ord(","): ""})
+            )
         except:
             area_sqft = "NaN"
 
@@ -36,55 +40,70 @@ class PrimeLocationScraper(PropertyScraper):
         """
         Returns property features.
         """
-        
+
         try:
-            property_features = [feature.text for feature in
-                self.driver.find_elements_by_xpath(
-                "//div[@id='tab-details']/div[@class='clearfix']//li")]
+            property_features = [
+                feature.text
+                for feature in self.driver.find_elements_by_xpath(
+                    "//div[@id='tab-details']/div[@class='clearfix']//li"
+                )
+            ]
 
             assert len(property_features) > 0
 
         except AssertionError:
             property_features = ["NaN"]
-        
+
         return property_features
-    
+
     def get_property_info(self) -> list:
         """
         Gets all property info.
         """
-        
+
         try:
-            property_info = [info.text for info in
-                self.driver.find_elements_by_xpath(
-                "//div[@id='tab-details']/ul/li")]
+            property_info = [
+                info.text
+                for info in self.driver.find_elements_by_xpath(
+                    "//div[@id='tab-details']/ul/li"
+                )
+            ]
 
             assert len(property_info) > 0
 
         except AssertionError:
             property_info = ["NaN"]
-        
+
         return property_info
-    
+
     def get_beds_baths_receps(self) -> tuple:
         """
         Returns number of bedrooms, number of bathrooms and number of receptions.
         """
         try:
-            bedrooms = int(self.driver.find_element_by_xpath(
-            "//span[@class='num-icon num-beds']").text.split()[0])
+            bedrooms = int(
+                self.driver.find_element_by_xpath(
+                    "//span[@class='num-icon num-beds']"
+                ).text.split()[0]
+            )
         except:
             bedrooms = "NaN"
-        
+
         try:
-            bathrooms = int(self.driver.find_element_by_xpath(
-            "//span[@class='num-icon num-baths']").text.split()[0])
+            bathrooms = int(
+                self.driver.find_element_by_xpath(
+                    "//span[@class='num-icon num-baths']"
+                ).text.split()[0]
+            )
         except:
             bathrooms = "NaN"
-        
+
         try:
-            receptions = int(self.driver.find_element_by_xpath(
-            "//span[@class='num-icon num-reception']").text.split()[0])
+            receptions = int(
+                self.driver.find_element_by_xpath(
+                    "//span[@class='num-icon num-reception']"
+                ).text.split()[0]
+            )
         except:
             receptions = "NaN"
 
@@ -108,10 +127,10 @@ class PrimeLocationScraper(PropertyScraper):
             is_furnish = True
         else:
             is_furnish = "NaN"
-        
+
         is_shared = "shared" in description
-        is_stud = not("no student" in description or "not for student" in description)
-        
+        is_stud = not ("no student" in description or "not for student" in description)
+
         return is_furnish, is_shared, is_stud
 
     def get_maps(self) -> tuple:
@@ -128,13 +147,22 @@ class PrimeLocationScraper(PropertyScraper):
             self.quit_popup_alert()
             self.driver.find_element_by_xpath("//li[@aria-controls='tab-map']").click()
             self.wait = WebDriverWait(self.driver, 10)
-            gmaps_link = self.wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='gm-style']//a[@title=\
-    'Open this area in Google Maps (opens a new window)']"))).get_attribute("href")
-            latitude, longitude = [float(coord) for coord in
-                gmaps_link.split("ll=")[1].split("&")[0].split(",")]
+            gmaps_link = self.wait.until(
+                EC.visibility_of_element_located(
+                    (
+                        By.XPATH,
+                        "//div[@class='gm-style']//a[@title=\
+    'Open this area in Google Maps (opens a new window)']",
+                    )
+                )
+            ).get_attribute("href")
+            latitude, longitude = [
+                float(coord)
+                for coord in gmaps_link.split("ll=")[1].split("&")[0].split(",")
+            ]
         except:
             latitude, longitude, gmaps_link = "NaN", "NaN", "NaN"
-        
+
         return latitude, longitude, gmaps_link
 
     def get_agent(self) -> tuple:
@@ -143,33 +171,40 @@ class PrimeLocationScraper(PropertyScraper):
         """
         try:
             agent = self.driver.find_element_by_xpath(
-                "//div[@id='listings-agent']//p//a").text
+                "//div[@id='listings-agent']//p//a"
+            ).text
         except:
             agent = "NaN"
-        
+
         try:
             agent_phone_number = self.driver.find_element_by_xpath(
-                "//span[@class='agent_phone']/a").text.translate({ord(' '): ''})
+                "//span[@class='agent_phone']/a"
+            ).text.translate({ord(" "): ""})
         except:
             agent_phone_number = "NaN"
-        
+
         return agent, agent_phone_number
 
     def find_pictures(self):
-        num_pictures = int(self.driver.find_element_by_xpath(
-            "//div[@id='images-tally']").text.rstrip().split()[-1])
-        
+        num_pictures = int(
+            self.driver.find_element_by_xpath("//div[@id='images-tally']")
+            .text.rstrip()
+            .split()[-1]
+        )
+
         path = ""
         while True:
-            downloaded_image = int(self.driver.find_element_by_xpath(
-                "//span[@id='images-num']").text)
+            downloaded_image = int(
+                self.driver.find_element_by_xpath("//span[@id='images-num']").text
+            )
 
             src = self.driver.find_element_by_xpath(
-                "//div[@id='images-main']//img").get_attribute("src")
+                "//div[@id='images-main']//img"
+            ).get_attribute("src")
 
             # download the image
             path = path + self.download_image(src, downloaded_image) + ", "
-        
+
             if downloaded_image >= num_pictures:
                 break
 
@@ -182,10 +217,12 @@ class PrimeLocationScraper(PropertyScraper):
         self.driver = webdriver.Chrome()
 
         # Unique identifier used for identifying buckets
-        self.property_id = "PrimeLocation/" + url.split("details/")[1].split("/")[0] + "/"
+        self.property_id = (
+            "PrimeLocation/" + url.split("details/")[1].split("/")[0] + "/"
+        )
 
         # Open new tab
-        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 't')
+        self.driver.find_element_by_tag_name("body").send_keys(Keys.CONTROL + "t")
         self.driver.get(url)
 
         agent, agent_phone_number = self.get_agent()
@@ -194,16 +231,19 @@ class PrimeLocationScraper(PropertyScraper):
         property_features = self.get_property_features()
         property_info = self.get_property_info()
         property_description = self.driver.find_element_by_xpath(
-            "//div[@class='bottom-plus-half']/div[@class='top']").text
-        
+            "//div[@class='bottom-plus-half']/div[@class='top']"
+        ).text
+
         property_details = self.driver.find_element_by_xpath(
-        "//h1[@class='listing-details-h1']").text
+            "//h1[@class='listing-details-h1']"
+        ).text
 
         is_rent = "to rent" in property_details.lower()
 
         price_description = self.driver.find_element_by_xpath(
-            "//span[@class='price']").text
-        
+            "//span[@class='price']"
+        ).text
+
         if is_rent:
             price_for_sale = "NaN"
             price_for_sqft = "NaN"
@@ -212,10 +252,12 @@ class PrimeLocationScraper(PropertyScraper):
                 price_per_month = "NaN"
                 price_per_week = "NaN"
             else:
-                price_per_month = int(price_description.split()[0].translate(
-                        {ord(i): '' for i in '£,'}))
-                price_per_week = int(price_description.split()[2].translate(
-                        {ord(i): '' for i in '(£,'}))
+                price_per_month = int(
+                    price_description.split()[0].translate({ord(i): "" for i in "£,"})
+                )
+                price_per_week = int(
+                    price_description.split()[2].translate({ord(i): "" for i in "(£,"})
+                )
         else:
             price_per_month = "NaN"
             price_per_week = "NaN"
@@ -224,56 +266,62 @@ class PrimeLocationScraper(PropertyScraper):
                 price_for_sale = "NaN"
                 price_for_sqft = "NaN"
             else:
-                price_sale = int(price_description.split()[0].translate(
-                    {ord(i): '' for i in '£,'}))
-                price_per_sqft = int(price_description.split()[1].translate(
-                    {ord(i): '' for i in '(£,/sq.'}))
+                price_sale = int(
+                    price_description.split()[0].translate({ord(i): "" for i in "£,"})
+                )
+                price_per_sqft = int(
+                    price_description.split()[1].translate(
+                        {ord(i): "" for i in "(£,/sq."}
+                    )
+                )
 
         picture = self.find_pictures()
         la, lo, gmaps_link = self.get_maps()
 
-        all_details = [property_details] + [
-            property_description] + property_features + property_info
-        
+        all_details = (
+            [property_details]
+            + [property_description]
+            + property_features
+            + property_info
+        )
+
         complete_description = " | "
         for detail in all_details:
             complete_description += detail + " | "
 
-        is_furnish, is_shared, is_stud = self.get_furnished_shared_student(complete_description)
-        
+        is_furnish, is_shared, is_stud = self.get_furnished_shared_student(
+            complete_description
+        )
+
         # Close tab
-        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 'w')
+        self.driver.find_element_by_tag_name("body").send_keys(Keys.CONTROL + "w")
 
         # Close browser
         self.driver.close()
 
         scraped_property = Property(
-            country='GB',
-            city= addres.split(", ")[-1].split()[0], # Not always get the city
+            country="GB",
+            city=addres.split(", ")[-1].split()[0],  # Not always get the city
             address=addres,
             post_code=addres.split(", ")[-1].split()[1],
             longitude=lo,
             latitude=la,
-
-            area_m_2=0.092903*area_sqft,
+            area_m_2=0.092903 * area_sqft,
             number_of_bedrooms=bedrooms,
             number_of_bathrooms=bathrooms,
-
             is_rental=is_rent,
             is_shared_accomodation=is_shared,
             is_student=is_stud,
             is_furnished=is_furnish,
-
-            price_for_sale = price_sale,
+            price_for_sale=price_sale,
             price_per_month_gbp=price_per_month,
             property_type=propert_type,
-            
-            url= url,
+            url=url,
             description=complete_description,
             agency=agent,
             agency_phone_number=agent_phone_number,
-            google_maps =gmaps_link,
-            pictures=picture
+            google_maps=gmaps_link,
+            pictures=picture,
         )
 
         # Save to database

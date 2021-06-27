@@ -3,11 +3,11 @@ from url_scrapers.property_scraper import PropertyScraper
 from bs4 import BeautifulSoup
 import requests
 
+
 class ZooplaScraper(PropertyScraper):
     def __init__(self, db_factory) -> None:
         super().__init__(db_factory)
-        self.property_scraper= 'Zoopla' 
-
+        self.property_scraper = "Zoopla"
 
     def fetch_url(self, url):
         page = requests.get(url)
@@ -16,25 +16,32 @@ class ZooplaScraper(PropertyScraper):
         return soup
 
     def find_country(self, web_page):
-        return 'GB'
+        return "GB"
 
     def find_city(self, soup):
         return None
         # The following isn't always displaying the city
-        tags = [item for item in soup.find_all('span', attrs={'data-testid' : 'address-label'})]
+        tags = [
+            item
+            for item in soup.find_all("span", attrs={"data-testid": "address-label"})
+        ]
 
         for tag in tags:
             data = tag.get_text()
-            data = data.split(',')[-1].strip()
-            data = data.split(' ')[0]
+            data = data.split(",")[-1].strip()
+            data = data.split(" ")[0]
             return data
 
         return None
 
-
     def find_address(self, soup):
         try:
-            tags = [item for item in soup.find_all('span', attrs={'data-testid' : 'address-label'})]
+            tags = [
+                item
+                for item in soup.find_all(
+                    "span", attrs={"data-testid": "address-label"}
+                )
+            ]
 
             for tag in tags:
                 data = tag.get_text()
@@ -44,12 +51,17 @@ class ZooplaScraper(PropertyScraper):
 
     def find_post_code(self, soup):
         try:
-            tags = [item for item in soup.find_all('span', attrs={'data-testid' : 'address-label'})]
+            tags = [
+                item
+                for item in soup.find_all(
+                    "span", attrs={"data-testid": "address-label"}
+                )
+            ]
 
             for tag in tags:
                 data = tag.get_text()
-                data = data.split(',')[-1].strip()
-                data = data.split(' ')[-1]
+                data = data.split(",")[-1].strip()
+                data = data.split(" ")[-1]
                 return data
         except:
             return None
@@ -62,10 +74,8 @@ class ZooplaScraper(PropertyScraper):
         #     data = tag['src']
         # From the source can extract the centre == Long/lat -- but the googlemap isn't loading
 
-
     def find_area_m_2(self, web_page):
-        return None #Not on Zoopla
-
+        return None  # Not on Zoopla
 
     def find_is_rental(self, web_page):
         return False
@@ -85,34 +95,42 @@ class ZooplaScraper(PropertyScraper):
 
     def find_buy_price_gbp(self, soup):
         try:
-            prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'})]
+            prices = [
+                item for item in soup.find_all("span", attrs={"data-testid": "price"})
+            ]
 
             for price in prices:
                 data = price.get_text()
                 data = data[1:]
-                data = data.replace(',','')
+                data = data.replace(",", "")
                 return data
         except:
             return None
 
     def find_number_of_bathrooms(self, soup):
         try:
-            baths = [item for item in soup.find_all('span', attrs={'data-testid' : 'baths-label'})]
+            baths = [
+                item
+                for item in soup.find_all("span", attrs={"data-testid": "baths-label"})
+            ]
 
             for tag in baths:
                 baths = tag.get_text()
-                baths = baths.split(' ')[0]
+                baths = baths.split(" ")[0]
                 return baths
         except:
             return None
 
     def find_number_of_bedrooms(self, soup):
         try:
-            beds = [item for item in soup.find_all('span', attrs={'data-testid' : 'beds-label'})]
+            beds = [
+                item
+                for item in soup.find_all("span", attrs={"data-testid": "beds-label"})
+            ]
 
             for p in beds:
                 beds = p.get_text()
-                beds = beds.split(' ')[0]
+                beds = beds.split(" ")[0]
                 return beds
         except:
             return None
@@ -122,7 +140,12 @@ class ZooplaScraper(PropertyScraper):
 
     def find_description(self, soup):
         try:
-            tags = [item for item in soup.find_all('section', attrs={'data-testid' : 'page_features_section'})]
+            tags = [
+                item
+                for item in soup.find_all(
+                    "section", attrs={"data-testid": "page_features_section"}
+                )
+            ]
 
             for tag in tags:
                 data = tag.get_text(separator="\n")
@@ -133,47 +156,39 @@ class ZooplaScraper(PropertyScraper):
     def find_pictures(self, web_page):
         return None
 
-
     def scrape_url(self, url):
         web_page = self.fetch_url(url)
         scraped_property = Property(
-            country= self.find_country(web_page),
-            city= self.find_city(web_page),
-            address= self.find_address(web_page),
-            post_code= self.find_post_code(web_page),
-            longitude= self.find_long_lat(web_page),
-            latitude= self.find_long_lat(web_page),
-
-            area_m_2= self.find_area_m_2(web_page),
-            number_of_bedrooms= self.find_number_of_bedrooms(web_page),
-            number_of_bathrooms = self.find_number_of_bathrooms(web_page),
-
-            is_rental= self.find_is_rental(web_page),
-            is_shared_accomodation= self.find_is_shared_accomodation(web_page),
-            is_student= self.find_is_student(web_page),
-            is_furnished= self.find_is_furnished(web_page),
-
+            country=self.find_country(web_page),
+            city=self.find_city(web_page),
+            address=self.find_address(web_page),
+            post_code=self.find_post_code(web_page),
+            longitude=self.find_long_lat(web_page),
+            latitude=self.find_long_lat(web_page),
+            area_m_2=self.find_area_m_2(web_page),
+            number_of_bedrooms=self.find_number_of_bedrooms(web_page),
+            number_of_bathrooms=self.find_number_of_bathrooms(web_page),
+            is_rental=self.find_is_rental(web_page),
+            is_shared_accomodation=self.find_is_shared_accomodation(web_page),
+            is_student=self.find_is_student(web_page),
+            is_furnished=self.find_is_furnished(web_page),
             price_per_month_gbp=self.find_price_per_month_gbp(web_page),
             price_for_sale=self.find_buy_price_gbp(web_page),
-            
-            property_type= self.find_property_type(web_page),
-            
-            url= url,
-            description= self.find_description(web_page),
-            pictures= self.find_pictures(web_page),
-
+            property_type=self.find_property_type(web_page),
+            url=url,
+            description=self.find_description(web_page),
+            pictures=self.find_pictures(web_page),
         )
-        
+
         # print(f"Saving:\n{scraped_property}")
         self.save_property(scraped_property)
-
 
 
 class ZooplaRentScraper(ZooplaScraper):
     def __init__(self, db_factory) -> None:
         super().__init__(db_factory)
-        self.property_scraper='ZooplaRent'
-    
+        self.property_scraper = "ZooplaRent"
+
     def find_is_rental(self, web_page):
         return True
 
@@ -192,7 +207,11 @@ class ZooplaRentScraper(ZooplaScraper):
 
     def find_price_per_month_gbp(self, soup):
         try:
-            prices = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'}) if 'pcm' in item.text]
+            prices = [
+                item
+                for item in soup.find_all("span", attrs={"data-testid": "price"})
+                if "pcm" in item.text
+            ]
 
             for p in prices:
                 final_pcm = p.get_text()

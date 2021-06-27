@@ -103,6 +103,9 @@ select count(distinct url) from properties; -- number of distinct properties scr
 delete from properties where price_per_month_gbp is NULL;
 delete from properties where description is NULL;
 
+-- distinct roots of URLs to be scraped
+select distinct substr(url,0,42) as url_root, count(*) from urls_to_scrape group by url_root limit 25;
+
 ```
 
 ## MacOS multi-threading Issue

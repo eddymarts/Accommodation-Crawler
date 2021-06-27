@@ -6,6 +6,7 @@ import urllib.request
 import boto3
 import os
 
+
 def fun(f, q_in, q_out):
     while True:
         i, x = q_in.get()
@@ -13,13 +14,16 @@ def fun(f, q_in, q_out):
             break
         q_out.put((i, f(x)))
 
+
 # https://stackoverflow.com/questions/3288595/multiprocessing-how-to-use-pool-map-on-a-function-defined-in-a-class
 def parmap(f, X, nprocs=multiprocessing.cpu_count()):
     q_in = multiprocessing.Queue(1)
     q_out = multiprocessing.Queue()
 
-    proc = [multiprocessing.Process(target=fun, args=(f, q_in, q_out))
-            for _ in range(nprocs)]
+    proc = [
+        multiprocessing.Process(target=fun, args=(f, q_in, q_out))
+        for _ in range(nprocs)
+    ]
     for p in proc:
         p.daemon = True
         p.start()
@@ -33,7 +37,7 @@ def parmap(f, X, nprocs=multiprocessing.cpu_count()):
     return [x for i, x in sorted(res)]
 
 
-class PropertyScraper():
+class PropertyScraper:
     def __init__(self, db_factory) -> None:
         self.db_factory = db_factory
         pass
@@ -41,26 +45,27 @@ class PropertyScraper():
     def create_bucket(self):
         """
         Create bucket.
-        
+
         UPDATE: Bucket already created.
         Error handled so that new creations are ignored.
         """
         self.bucket = "propertydl27060740"
         try:
-            self.s3 = boto3.client('s3')
+            self.s3 = boto3.client("s3")
             self.s3.create_bucket(
-                ACL='public-read-write',
+                ACL="public-read-write",
                 Bucket=self.bucket,
-                CreateBucketConfiguration={
-                    'LocationConstraint': 'eu-west-2'
-                })
+                CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+            )
 
         except Exception as error:
-            if "BucketAlreadyExists" in str(error) or "BucketAlreadyOwnedByYou" in str(error):
+            if "BucketAlreadyExists" in str(error) or "BucketAlreadyOwnedByYou" in str(
+                error
+            ):
                 pass
             else:
                 raise
-    
+
     def download_image(self, src: str, number_of_image: int) -> str:
         """
         Saves image of property to file to upload it to S3 afterwards.
@@ -71,7 +76,7 @@ class PropertyScraper():
         number_of_image: int containing an identifier to store
                         the image in your computer. The image
                         will be deleted after uploaded to S3.
-        
+
         OUTPUT: path of the image in S3
         """
         image = urllib.request.urlopen(src)
@@ -83,31 +88,29 @@ class PropertyScraper():
     def pictures_to_S3(self, image):
         """
         Uploads image to S3.
-        
+
         INPUT:
         image: string containing file identifier in your folder.
-        
+
         OUTPUT: path of the image in S3
         """
         self.create_bucket()
         path = f"/images/{self.property_id}{image}"
-        self.s3r = boto3.resource('s3')
-        self.s3r.meta.client.upload_file(
-            image, self.bucket, path)
+        self.s3r = boto3.resource("s3")
+        self.s3r.meta.client.upload_file(image, self.bucket, path)
         os.remove(image)
         return path
 
-
     def get_urls_from_db(self, number_to_scrape):
-        db_session =self.db_factory.get_fresh_session_for_multiprocessing()
-        
-        query = db_session.query(UrlToScrape).filter_by(
-            parser_to_use=self.property_scraper
-        ).filter_by(
-            scraped_yet=False #default value is false
+        db_session = self.db_factory.get_fresh_session_for_multiprocessing()
+
+        query = (
+            db_session.query(UrlToScrape)
+            .filter_by(parser_to_use=self.property_scraper)
+            .filter_by(scraped_yet=False)  # default value is false
         )
 
-        urls = query[:number_to_scrape] # Limit it to just the ones to scrape
+        urls = query[:number_to_scrape]  # Limit it to just the ones to scrape
         db_session.close()
         return urls
 
@@ -116,7 +119,7 @@ class PropertyScraper():
         return datetime.now()
 
     def save_property(self, property_object):
-        property_object.updated_date=self.current_date();
+        property_object.updated_date = self.current_date()
 
         db_session = self.db_factory.get_fresh_session_for_multiprocessing()
 
@@ -128,7 +131,7 @@ class PropertyScraper():
         urls_to_scrape = self.get_urls_from_db(number_to_scrape)
         print(f"{self.property_scraper} -- Need to scrape {len(urls_to_scrape)} URLs")
         print(urls_to_scrape)
-        
+
         # Define it in here so it isn't defined as an object on the class
         def _scrape_url_obj_individual(self, url_obj):
             db_session = self.db_factory.get_fresh_session_for_multiprocessing()
@@ -140,13 +143,13 @@ class PropertyScraper():
                 db_session.commit()
 
             def mark_as_currently_scraping(url_obj):
-                _mark_url_obj_status(url_obj, 'CURRENTLY_SCRAPING')
+                _mark_url_obj_status(url_obj, "CURRENTLY_SCRAPING")
 
             def mark_as_finished_scraping(url_obj):
-                _mark_url_obj_status(url_obj, 'FINISHED')
+                _mark_url_obj_status(url_obj, "FINISHED")
 
             def mark_as_failed_scraping(url_obj):
-                _mark_url_obj_status(url_obj, 'FAILED')
+                _mark_url_obj_status(url_obj, "FAILED")
 
             url = url_obj.url
 
@@ -166,14 +169,20 @@ class PropertyScraper():
                 mark_as_failed_scraping(url_obj)
 
         # Multithreading
-        multithreaded_scraper = True; # Change this to False if multithreading is causing issues such as concurrency locks
+        multithreaded_scraper = True
+        # Change this to False if multithreading is causing issues such as concurrency locks
         # multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
 
         if multithreaded_scraper:
-            sub_processes = multiprocessing.cpu_count() - 1 # -1 so it doesn't freeze the whole computer.
-            parmap(lambda url: _scrape_url_obj_individual(self,url), urls_to_scrape, nprocs=sub_processes)
+            sub_processes = (
+                multiprocessing.cpu_count() - 1
+            )  # -1 so it doesn't freeze the whole computer.
+            parmap(
+                lambda url: _scrape_url_obj_individual(self, url),
+                urls_to_scrape,
+                nprocs=sub_processes,
+            )
 
         else:
             for url_obj in urls_to_scrape:
                 _scrape_url_obj_individual(self, url_obj)
-
