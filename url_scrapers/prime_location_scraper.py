@@ -68,6 +68,20 @@ class PrimeLocationScraper(PropertyScraper):
             property_info = [None]
         
         return property_info
+
+    def get_property_description(self) -> str:
+        """
+        Gets property description.
+        """
+        
+        try:
+            property_description = self.driver.find_element_by_xpath(
+            "//div[@class='bottom-plus-half']/div[@class='top']").text
+
+        except:
+            property_description = None
+        
+        return property_description
     
     def get_beds_baths_receps(self) -> tuple:
         """
@@ -198,8 +212,7 @@ class PrimeLocationScraper(PropertyScraper):
         area_sqft, area_m2 = self.get_area_sqft()
         property_features = self.get_property_features()
         property_info = self.get_property_info()
-        property_description = self.driver.find_element_by_xpath(
-            "//div[@class='bottom-plus-half']/div[@class='top']").text
+        property_description = self.get_property_description()
         
         property_details = self.driver.find_element_by_xpath(
         "//h1[@class='listing-details-h1']").text
