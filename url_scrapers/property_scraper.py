@@ -95,10 +95,14 @@ class PropertyScraper():
         # Bucket already created
         # self.create_bucket()
         path = f"/images/{self.property_scraper}/{self.property_id}/image{image_number}.jpg"
-        self.s3r = boto3.resource('s3')
-        self.s3r.meta.client.upload_file(
-            image, self.bucket, path)
-        os.remove(image)
+        try:
+            self.s3r = boto3.resource('s3')
+            self.s3r.meta.client.upload_file(
+                image, self.bucket, path)
+            os.remove(image)
+        except Exception as e:
+            print(f"Error while uploading picture to AWS S3:\n Error: {e}")
+            path = "No picture uploaded."
         return path
 
 
