@@ -24,13 +24,15 @@ class PrimeLocationScraper(PropertyScraper):
         Returns area as an integer in squared feet.
         """
         try:
-            area_sqft = int(self.driver.find_element_by_xpath(
+            area_sqft = float(self.driver.find_element_by_xpath(
             "//span[@class='num-icon num-sqft ']").text.split()[0].translate(
                     {ord(','): ''}))
+            area_m2 = 0.092903*area_sqft
         except:
-            area_sqft = "NaN"
+            area_sqft = None
+            area_m2 = None
 
-        return area_sqft
+        return area_sqft, area_m2
 
     def get_property_features(self) -> list:
         """
@@ -45,7 +47,7 @@ class PrimeLocationScraper(PropertyScraper):
             assert len(property_features) > 0
 
         except AssertionError:
-            property_features = ["NaN"]
+            property_features = [None]
         
         return property_features
     
@@ -62,7 +64,7 @@ class PrimeLocationScraper(PropertyScraper):
             assert len(property_info) > 0
 
         except AssertionError:
-            property_info = ["NaN"]
+            property_info = [None]
         
         return property_info
     
@@ -74,19 +76,19 @@ class PrimeLocationScraper(PropertyScraper):
             bedrooms = int(self.driver.find_element_by_xpath(
             "//span[@class='num-icon num-beds']").text.split()[0])
         except:
-            bedrooms = "NaN"
+            bedrooms = None
         
         try:
             bathrooms = int(self.driver.find_element_by_xpath(
             "//span[@class='num-icon num-baths']").text.split()[0])
         except:
-            bathrooms = "NaN"
+            bathrooms = None
         
         try:
             receptions = int(self.driver.find_element_by_xpath(
             "//span[@class='num-icon num-reception']").text.split()[0])
         except:
-            receptions = "NaN"
+            receptions = None
 
         return bedrooms, bathrooms, receptions
 
@@ -107,7 +109,7 @@ class PrimeLocationScraper(PropertyScraper):
         elif "furnished" in description:
             is_furnish = True
         else:
-            is_furnish = "NaN"
+            is_furnish = None
         
         is_shared = "shared" in description
         is_stud = not("no student" in description or "not for student" in description)
@@ -133,7 +135,7 @@ class PrimeLocationScraper(PropertyScraper):
             latitude, longitude = [float(coord) for coord in
                 gmaps_link.split("ll=")[1].split("&")[0].split(",")]
         except:
-            latitude, longitude, gmaps_link = "NaN", "NaN", "NaN"
+            latitude, longitude, gmaps_link = None, None, None
         
         return latitude, longitude, gmaps_link
 
@@ -145,13 +147,13 @@ class PrimeLocationScraper(PropertyScraper):
             agent = self.driver.find_element_by_xpath(
                 "//div[@id='listings-agent']//p//a").text
         except:
-            agent = "NaN"
+            agent = None
         
         try:
             agent_phone_number = self.driver.find_element_by_xpath(
                 "//span[@class='agent_phone']/a").text.translate({ord(' '): ''})
         except:
-            agent_phone_number = "NaN"
+            agent_phone_number = None
         
         return agent, agent_phone_number
 
@@ -182,7 +184,7 @@ class PrimeLocationScraper(PropertyScraper):
         self.driver = webdriver.Chrome()
 
         # Unique identifier used for identifying buckets
-        self.property_id = "PrimeLocation/" + url.split("details/")[1].split("/")[0] + "/"
+        self.property_id = url.split("details/")[1].split("/")[0]
 
         # Open new tab
         self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 't')
@@ -190,7 +192,7 @@ class PrimeLocationScraper(PropertyScraper):
 
         agent, agent_phone_number = self.get_agent()
         bedrooms, bathrooms, receptions = self.get_beds_baths_receps()
-        area_sqft = self.get_area_sqft()
+        area_sqft, area_m2 = self.get_area_sqft()
         property_features = self.get_property_features()
         property_info = self.get_property_info()
         property_description = self.driver.find_element_by_xpath(
@@ -205,30 +207,30 @@ class PrimeLocationScraper(PropertyScraper):
             "//span[@class='price']").text
         
         if is_rent:
-            price_for_sale = "NaN"
-            price_for_sqft = "NaN"
+            price_sale = None
             propert_type, addres = property_details.split(" to rent in ")
             if "POA" in price_description.upper():
-                price_per_month = "NaN"
-                price_per_week = "NaN"
+                price_per_month = None
             else:
-                price_per_month = int(price_description.split()[0].translate(
+                if len(price_description.split()) > 1:
+                    price_per_month = int(price_description.split()[0].translate(
                         {ord(i): '' for i in '£,'}))
-                price_per_week = int(price_description.split()[2].translate(
-                        {ord(i): '' for i in '(£,'}))
+                else:
+                    price_per_month = int(price_description.translate(
+                        {ord(i): '' for i in '£,'}))
         else:
-            price_per_month = "NaN"
-            price_per_week = "NaN"
+            price_per_month = None
             propert_type, addres = property_details.split(" for sale in ")
             if "POA" in price_description.upper():
-                price_for_sale = "NaN"
-                price_for_sqft = "NaN"
+                price_sale = None
             else:
-                price_sale = int(price_description.split()[0].translate(
-                    {ord(i): '' for i in '£,'}))
-                price_per_sqft = int(price_description.split()[1].translate(
-                    {ord(i): '' for i in '(£,/sq.'}))
-
+                if len(price_description.split()) > 1:
+                    price_sale = int(price_description.split()[0].translate(
+                        {ord(i): '' for i in '£,'}))
+                else:
+                    price_sale = int(price_description.translate(
+                        {ord(i): '' for i in '£,'}))
+    
         picture = self.find_pictures()
         la, lo, gmaps_link = self.get_maps()
 
@@ -237,7 +239,7 @@ class PrimeLocationScraper(PropertyScraper):
         
         complete_description = " | "
         for detail in all_details:
-            complete_description += detail + " | "
+            complete_description += str(detail) + " | "
 
         is_furnish, is_shared, is_stud = self.get_furnished_shared_student(complete_description)
         
@@ -255,7 +257,7 @@ class PrimeLocationScraper(PropertyScraper):
             longitude=lo,
             latitude=la,
 
-            area_m_2=0.092903*area_sqft,
+            area_m_2=area_m2,
             number_of_bedrooms=bedrooms,
             number_of_bathrooms=bathrooms,
 
@@ -268,7 +270,7 @@ class PrimeLocationScraper(PropertyScraper):
             price_per_month_gbp=price_per_month,
             property_type=propert_type,
             
-            url= url,
+            url=url,
             description=complete_description,
             agency=agent,
             agency_phone_number=agent_phone_number,
