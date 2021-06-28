@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from models import Property
 from url_scrapers.property_scraper import PropertyScraper
 
@@ -170,8 +171,8 @@ class PrimeLocationScraper(PropertyScraper):
                 "//div[@id='images-main']//img").get_attribute("src")
 
             # download the image
-            path = path + self.download_image(src, downloaded_image) + ", "
-        
+            path = path + self.download_image(src, downloaded_image) #+ ", "
+            break                       #Download just one picture for speed.
             if downloaded_image >= num_pictures:
                 break
 
@@ -181,7 +182,9 @@ class PrimeLocationScraper(PropertyScraper):
 
     def scrape_url(self, url):
         # Open browser
-        self.driver = webdriver.Chrome()
+        options = Options()
+        options.headless = True
+        self.driver = webdriver.Chrome(options=options)
 
         # Unique identifier used for identifying buckets
         self.property_id = url.split("details/")[1].split("/")[0]
