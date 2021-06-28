@@ -134,3 +134,5 @@ dmypy.json
 property_db.sqlite3
 property_db copy.sqlite3
 *.jpg
+
+*.csv
