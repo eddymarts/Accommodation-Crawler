@@ -128,6 +128,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
 .vscode/settings.json
 property_db.sqlite3
 property_db copy.sqlite3
+*.jpg

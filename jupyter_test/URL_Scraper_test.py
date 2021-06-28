@@ -52,11 +52,11 @@ for a in urls:
     print(a['href'])
 
 
-# In[54]:
+# In[5]:
 
 
 
-url = f"https://www.zoopla.co.uk/to-rent/details/57420836/"
+url = f"https://www.zoopla.co.uk/for-sale/details/59013492/"
 print(url)
 
 page = requests.get(url)
@@ -64,13 +64,13 @@ soup = BeautifulSoup(page.content)
 print(page.status_code)
 
 
-# In[55]:
+# In[6]:
 
 
 print(soup)
 
 
-# In[11]:
+# In[7]:
 
 
 # price = [item for item in soup.find_all('a', attrs={'data-testid' : True}) if item['data-testid']=='listing-details-link']
@@ -82,21 +82,37 @@ for p in prices:
     final_pcm = p.get_text()
 
 
-# In[12]:
+# In[8]:
 
 
 final_pcm[1:-4]
 
 
-# In[24]:
+# In[11]:
 
 
-baths = [item for item in soup.find_all('span', attrs={'data-testid' : 'baths-label'})]
+baths = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'})]
 
 for tag in baths:
     baths = tag.get_text()
     baths = baths.split(' ')[0]
     print(baths)
+    
+
+
+# In[15]:
+
+
+try:
+    tags = [item for item in soup.find_all('span', attrs={'data-testid' : 'price'})]
+
+    for tag in tags:
+        data = tag.get_text()
+        data = data[1:]
+        data=data.replace(',','')
+        print(data)
+except:
+    None
 
 
 # In[ ]:

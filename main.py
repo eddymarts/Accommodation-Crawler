@@ -13,11 +13,13 @@ import time
 # https://docs.sqlalchemy.org/en/14/orm/tutorial.html
 def setup_db():
     db = DB_factory()
-    return db.get_session();
+    return db.get_session()
+
 
 def setup_pooled_db_for_multitasking():
     db_factory = DB_factory()
-    return db_factory;
+    return db_factory
+
 
 def fetch_urls():
     db_session = setup_db()
@@ -41,8 +43,6 @@ def fetch_urls():
     except Exception as error:
         print(f"Got error:{error}")
         print(f"Failed to scrape all PrimeLocationUrls")
-
-
 
 
 def scrape_urls():
@@ -69,21 +69,25 @@ def scrape_urls():
         except Exception as error:
             print(f"Got error:{error}")
             print(f"Failed to scrape PrimeLocation URLs")
-        
+
         # scrape 1000 at a time with a wait in between in-case the queue is empty.
         time.sleep(5)
-        print(f"\n\nWaiting for 5 seconds before scraping next {number_to_scrape} urls.\n\n")
+        print(
+            f"\n\nWaiting for 5 seconds before scraping next {number_to_scrape} urls.\n\n"
+        )
 
-VALID_ARGUMENTS = ['scrape', 'fetch']
+
+VALID_ARGUMENTS = ["scrape", "fetch"]
+
 
 def get_argument():
-    argument = 'fetch_URLs'
-    argument = 'scrape'
+    argument = "fetch_URLs"
+    argument = "scrape"
 
     args = [arg for arg in sys.argv[1:]]
     if len(args):
         argument = args[0]
-    
+
     # print(f"Argument is {argument}")
     if argument not in VALID_ARGUMENTS:
         raise Exception("Invalid argument specified")
@@ -93,9 +97,8 @@ def get_argument():
 
 argument = get_argument()
 
-if argument == 'scrape':
-    scrape_urls();
+if argument == "scrape":
+    scrape_urls()
 
-elif argument == 'fetch':
+elif argument == "fetch":
     fetch_urls()
-

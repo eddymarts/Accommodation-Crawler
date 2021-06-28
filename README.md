@@ -83,6 +83,7 @@ https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%
 - Scrape images and put in s3 bucket ✅
 ## Extensibility
 To add new scrapers need to add a url-finder that fetches URLs of individual properties to scrape. Along with the type of scraper to use to scrape those individual properties. e.g: url_finders/zoopla_url_finder.py-ZooplaUrlFinder   
+
 Then need to add a scraper that takes one of those URLs and scrapes it for property details and saves a Property object to the database. e.g: url_scrapers/zoopla_scraper.py-ZooplaScraper
 
 
@@ -91,6 +92,8 @@ Then need to add a scraper that takes one of those URLs and scrapes it for prope
 -- if you end a run in the middle of scraping, some results will still be marked as 'CURRENTLY_SCRAPING'
 -- cleanup with the following:
 UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'CURRENTLY_SCRAPING';
+UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'FAILED';
+
 select distinct scraped_yet from urls_to_scrape limit 5;
 
 select count(distinct urls) from urls_to_scrape;
@@ -98,6 +101,22 @@ select count(distinct *) from urls_to_scrape; -- should be the same number as th
 
 select count(distinct url) from properties; -- number of distinct properties scraped (some may have accidentally been scraped twice)
 
+-- How many not scraped
+ select count(url) from urls_to_scrape
+ where url not in (select distinct url from properties);
+
+
+-- clean data
+delete from properties where price_per_month_gbp is NULL;
+delete from properties where description is NULL;
+
+UPDATE urls_to_scrape SET scraped_yet = 0 WHERE url not in (select distinct url from properties);
+
+-- Distinct roots of URLs to be scraped
+select distinct substr(url,0,42) as url_root, count(*) from urls_to_scrape group by url_root limit 25;
+
+-- Distinct websites that properties were scraped from
+select distinct substr(url,0,42) as url_root, count(*) from properties group by url_root limit 25;
 ```
 
 ## MacOS multi-threading Issue
@@ -116,3 +135,4 @@ set -x OBJC_DISABLE_INITIALIZE_FORK_SAFETY YES
 
 
 
+postgres
