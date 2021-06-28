@@ -77,6 +77,7 @@ https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%
 
 ## Extensibility
 To add new scrapers need to add a url-finder that fetches URLs of individual properties to scrape. Along with the type of scraper to use to scrape those individual properties. e.g: url_finders/zoopla_url_finder.py-ZooplaUrlFinder   
+
 Then need to add a scraper that takes one of those URLs and scrapes it for property details and saves a Property object to the database. e.g: url_scrapers/zoopla_scraper.py-ZooplaScraper
 
 
@@ -103,9 +104,13 @@ select count(distinct url) from properties; -- number of distinct properties scr
 delete from properties where price_per_month_gbp is NULL;
 delete from properties where description is NULL;
 
--- distinct roots of URLs to be scraped
+UPDATE urls_to_scrape SET scraped_yet = 0 WHERE url not in (select distinct url from properties);
+
+-- Distinct roots of URLs to be scraped
 select distinct substr(url,0,42) as url_root, count(*) from urls_to_scrape group by url_root limit 25;
 
+-- Distinct websites that properties were scraped from
+select distinct substr(url,0,42) as url_root, count(*) from properties group by url_root limit 25;
 ```
 
 ## MacOS multi-threading Issue
@@ -124,3 +129,4 @@ set -x OBJC_DISABLE_INITIALIZE_FORK_SAFETY YES
 
 
 
+postgres

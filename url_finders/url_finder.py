@@ -8,7 +8,6 @@ class UrlFinder:
             raise Exception(
                 "No website specified. e.g: Zoopla, Prime Location. Please specify the website that this is scrapingo use when instantiating th"
             )
-        pass
 
     def url_already_exists(self, new_url):
         # print(f"Checking IF {new_url} already exists")

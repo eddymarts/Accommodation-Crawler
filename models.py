@@ -19,7 +19,6 @@ class UrlToScrape(Base):
         String
     )  # Category - so we can scrape multiple sites easily -- can just parse the URL when it's fetched
     scraped_yet = Column(String, default=False, nullable=False)
-    # date_modified = Column(String, nullable=False)
 
     def __repr__(self):
         return f"{self.id}-{self.url}"
@@ -81,7 +80,7 @@ class Property(Base):
         price_for_sale -- {self.price_for_sale}
         property_type -- {self.property_type}
         url -- {self.url}
-        description -- {self.description[:15]}
+
         pictures -- {self.pictures}
         updated_date -- {self.updated_date}
        """
