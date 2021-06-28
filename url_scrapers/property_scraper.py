@@ -40,6 +40,7 @@ def parmap(f, X, nprocs=multiprocessing.cpu_count()):
 class PropertyScraper:
     def __init__(self, db_factory) -> None:
         self.db_factory = db_factory
+        self.bucket = "propertydl27060740"  # S3 bucket
         pass
 
     def create_bucket(self):
@@ -49,7 +50,6 @@ class PropertyScraper:
         UPDATE: Bucket already created.
         Error handled so that new creations are ignored.
         """
-        self.bucket = "propertydl27060740"
         try:
             self.s3 = boto3.client("s3")
             self.s3.create_bucket(
@@ -80,25 +80,32 @@ class PropertyScraper:
         OUTPUT: path of the image in S3
         """
         image = urllib.request.urlopen(src)
-        file = f"image{number_of_image}.jpg"
+        file = f"{self.property_scraper}{self.property_id}image{number_of_image}.jpg"
         with open(f"{file}", "wb") as f:
             f.write(image.read())
-        return self.pictures_to_S3(file)
+        return self.pictures_to_S3(file, number_of_image)
 
-    def pictures_to_S3(self, image):
+    def pictures_to_S3(self, image: str, image_number: int) -> str:
         """
         Uploads image to S3.
 
         INPUT:
         image: string containing file identifier in your folder.
+        image_number: number of image to create path in S3.
 
         OUTPUT: path of the image in S3
         """
-        self.create_bucket()
-        path = f"/images/{self.property_id}{image}"
-        self.s3r = boto3.resource("s3")
-        self.s3r.meta.client.upload_file(image, self.bucket, path)
-        os.remove(image)
+
+        # Bucket already created
+        # self.create_bucket()
+        path = f"/images/{self.property_scraper}/{self.property_id}/image{image_number}.jpg"
+        try:
+            self.s3r = boto3.resource("s3")
+            self.s3r.meta.client.upload_file(image, self.bucket, path)
+            os.remove(image)
+        except Exception as e:
+            print(f"Error while uploading picture to AWS S3:\n Error: {e}")
+            path = "No picture uploaded."
         return path
 
     def get_urls_from_db(self, number_to_scrape):
@@ -158,6 +165,7 @@ class PropertyScraper:
             # This will be used in the bucket path.
             self.property_id = url
             print(f"\n{self.property_scraper} scraping url {url}")
+
             try:
                 mark_as_currently_scraping(url_obj)
                 self.scrape_url(url)

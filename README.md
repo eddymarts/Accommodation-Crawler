@@ -18,6 +18,10 @@ To scrape the URLs that have been saved for scraping run:
 $  python main.py scrape
 ```
 
+query_local_db.py to query the local sqlite
+For the moment it is set to drop the properties table
+and reset scrape_yet column in the URLs table.
+(DO NOT RUN THIS FILE WITHOUT VERIFYING.)
 
 
 ## Setting up venv
@@ -28,13 +32,11 @@ $ pip3 install -r requirements.txt
 ```
 ## ToDo:
 
-- write PrimeLocationScraper to scrape PrimeLocation for properties
 
 - Parallelise the url_scraper call so that multiple pages can be scraped at once
 - Shift to using postgresDB on AWS
 
 
-- Scrape images and put in s3 bucket
 
 
 Extension ideas?
@@ -43,7 +45,7 @@ Extension ideas?
 - Frontend with metrics?
 
 - Multithread the fetcher 
-- Multithread the scraper
+
 
 ## Helpful:
 https://www.worthwebscraping.com/how-to-scrape-zoopla-uk-real-estate-property-listings-scraping-using-python/
@@ -74,7 +76,11 @@ https://github.com/Tawfiqh/BeautifulSoupNotebookTest/blob/master/ParseWikipedia%
 - Setup url_scraper to read from the queue and scrape that property ✅
     - Mark scraped property as NULL ==> SCRAPING ==> SCRAPED + date_scraped ✅
 
+- write PrimeLocationScraper to scrape PrimeLocation for properties ✅
 
+- Multithread the scraper ✅
+
+- Scrape images and put in s3 bucket ✅
 ## Extensibility
 To add new scrapers need to add a url-finder that fetches URLs of individual properties to scrape. Along with the type of scraper to use to scrape those individual properties. e.g: url_finders/zoopla_url_finder.py-ZooplaUrlFinder   
 
