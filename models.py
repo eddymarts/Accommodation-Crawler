@@ -28,8 +28,6 @@ class Property(Base):
     __tablename__ = "properties"
 
     id = Column(Integer, primary_key=True)
-    country = Column(String, index=True)
-    city = Column(String, index=True)
     address = Column(String)
     post_code = Column(String)  # important one
     longitude = Column(Float)
@@ -39,11 +37,8 @@ class Property(Base):
     area_m_2 = Column(Float)
     number_of_bedrooms = Column(Integer)
     number_of_bathrooms = Column(Integer)
-
+    number_of_receptions = Column(Integer)
     is_rental = Column(Boolean)
-    is_shared_accomodation = Column(Boolean)
-    is_student = Column(Boolean)
-    is_furnished = Column(Boolean)
 
     price_for_sale = Column(Float, index=True)
     price_per_month_gbp = Column(Float, index=True)
@@ -62,8 +57,6 @@ class Property(Base):
     def __repr__(self):
         return f"""Property: 
         id -- {self.id}
-        country -- {self.country}
-        city -- {self.city}
         address -- {self.address}
         post_code -- {self.post_code}
         longitude -- {self.longitude}
@@ -72,6 +65,7 @@ class Property(Base):
         area_m_2 -- {self.area_m_2}
         number_of_bedrooms -- {self.number_of_bedrooms}
         number_of_bathrooms -- {self.number_of_bathrooms}
+        number_of_receptions -- {self.number_of_receptions}
         is_furnished -- {self.is_furnished}
         price_per_month_gbp -- {self.price_per_month_gbp}
         price_for_sale -- {self.price_for_sale}
