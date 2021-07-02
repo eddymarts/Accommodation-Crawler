@@ -40,8 +40,10 @@ def parmap(f, X, nprocs=multiprocessing.cpu_count()):
 class PropertyScraper:
     def __init__(self, db_factory) -> None:
         self.db_factory = db_factory
-        self.bucket = "propertydl27060740"  # S3 bucket
-        pass
+
+
+        with open("db_creds.txt", "r") as file:
+            self.bucket = file.read() # S3 bucket
 
     def create_bucket(self):
         """
