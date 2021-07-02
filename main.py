@@ -77,12 +77,13 @@ def scrape_urls():
         )
 
 
-VALID_ARGUMENTS = ["scrape", "fetch"]
+VALID_ARGUMENTS = ["scrape", "fetch", "clean"]
 
 
 def get_argument():
     argument = "fetch_URLs"
     argument = "scrape"
+    argument = "clean"
 
     args = [arg for arg in sys.argv[1:]]
     if len(args):
@@ -99,6 +100,7 @@ argument = get_argument()
 
 if argument == "scrape":
     scrape_urls()
-
 elif argument == "fetch":
     fetch_urls()
+elif argument == "clean":
+    clean_data()
