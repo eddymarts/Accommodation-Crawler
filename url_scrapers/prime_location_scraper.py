@@ -289,8 +289,6 @@ class PrimeLocationScraper(PropertyScraper):
         self.driver.close()
 
         scraped_property = Property(
-            country="GB",
-            city=addres.split(", ")[-1].split()[0],  # Not always get the city
             address=addres,
             post_code=addres.split(", ")[-1].split()[1],
             longitude=lo,
@@ -298,6 +296,7 @@ class PrimeLocationScraper(PropertyScraper):
             area_m_2=area_m2,
             number_of_bedrooms=bedrooms,
             number_of_bathrooms=bathrooms,
+            number_of_receptions=receptions,
             is_rental=is_rent,
             price_for_sale=price_sale,
             price_per_month_gbp=price_per_month,
