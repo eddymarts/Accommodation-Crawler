@@ -1,8 +1,6 @@
 import sqlite3
 import pandas as pd
 from pprint import pprint
-import datetime
-
 
 def print_df(df, max_rows=6, max_columns=None):
     with pd.option_context('display.max_rows', max_rows, 'display.max_columns', max_columns):  # more options can be specified also
@@ -63,17 +61,18 @@ PrimeLocation = pd.DataFrame(PrimeLocation, columns=pl_column_names)
 # Cleaning
 Zoopla = pd.DataFrame(Zoopla, columns=z_column_names)
 Zoopla.drop(["long_lat", "area_m_2"], axis=1, inplace=True)
-Zoopla["city"] = Zoopla["address"].apply(lambda x: x.split(", ")[-1].split()[0])
-Zoopla["is_furnished"] = Zoopla["description"].apply(get_furnished)
-Zoopla["is_shared_accomodation"] = Zoopla["description"].apply(lambda x: "shared" in x)
-Zoopla["is_student"] = Zoopla["description"].apply(
-    lambda x: not ("no student" in x or "not for student" in x))
 
 # Joint dataset
 Properties = pd.concat([PrimeLocation, Zoopla], ignore_index=True)
 Properties.dropna(how='all', inplace = True)
 Properties["id"] = Properties.index
 Properties.set_index("id", inplace=True)
+Properties["country"] = "United Kingdom"
+Properties["city"] = Properties["address"].apply(lambda x: x.split(", ")[-1].split()[0])
+Properties["is_furnished"] = Properties["description"].apply(get_furnished)
+Properties["is_shared"] = Properties["description"].apply(lambda x: "shared" in x)
+Properties["is_student"] = Properties["description"].apply(
+    lambda x: not ("no student" in x or "not for student" in x))
 
 # Already string
 # for column in ["country", "city", "address", "post_code", "property_type", "url",
@@ -91,6 +90,17 @@ Properties["updated_date"] = pd.to_datetime(Properties["updated_date"])
 Properties["is_furnished"] = ~(~ Properties["is_rental"] & Properties["is_furnished"].isnull())
 Properties.loc[Properties["area_m_2"]==0, "area_m_2"] = None
 Properties.to_csv("properties_db.csv")
+
+
+
+class PropertyCleaning:
+    """ Class for the process of cleaning property data. """
+
+    def __init__(self, properties) -> PropertyCleaning:
+        self.properties = properties
+
+
+
 print_df(Properties)
 print(Properties.info())
 describe_df(Properties)

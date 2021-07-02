@@ -72,9 +72,6 @@ class Property(Base):
         area_m_2 -- {self.area_m_2}
         number_of_bedrooms -- {self.number_of_bedrooms}
         number_of_bathrooms -- {self.number_of_bathrooms}
-        is_rental -- {self.is_rental}
-        is_shared_accomodation -- {self.is_shared_accomodation}
-        is_student -- {self.is_student}
         is_furnished -- {self.is_furnished}
         price_per_month_gbp -- {self.price_per_month_gbp}
         price_for_sale -- {self.price_for_sale}

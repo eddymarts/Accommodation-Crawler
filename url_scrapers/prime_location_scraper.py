@@ -126,30 +126,6 @@ class PrimeLocationScraper(PropertyScraper):
 
         return bedrooms, bathrooms, receptions
 
-    def get_furnished_shared_student(self, description: str) -> tuple:
-        """
-        Returns tuple of bools as follows:
-        INPUT: all_details: list of strings, All details of the property
-
-        OUTPUT:
-            is_furnish: bool
-            is_shared: bool
-            is_stud: bool
-        """
-        description = description.lower()
-
-        if "unfurnished" in description or "no furnished" in description:
-            is_furnish = False
-        elif "furnished" in description:
-            is_furnish = True
-        else:
-            is_furnish = None
-
-        is_shared = "shared" in description
-        is_stud = not ("no student" in description or "not for student" in description)
-
-        return is_furnish, is_shared, is_stud
-
     def get_maps(self) -> tuple:
         """
         Searches for the Google Maps link of the property.
@@ -220,8 +196,8 @@ class PrimeLocationScraper(PropertyScraper):
             ).get_attribute("src")
 
             # download the image
-            path = path + self.download_image(src, downloaded_image)  # + ", "
-            break  # Download just one picture for speed.
+            path = path + self.download_image(src, downloaded_image) + ", "
+            
             if downloaded_image >= num_pictures:
                 break
 
@@ -306,10 +282,6 @@ class PrimeLocationScraper(PropertyScraper):
         for detail in all_details:
             complete_description += str(detail) + " | "
 
-        is_furnish, is_shared, is_stud = self.get_furnished_shared_student(
-            complete_description
-        )
-
         # Close tab
         self.driver.find_element_by_tag_name("body").send_keys(Keys.CONTROL + "w")
 
@@ -327,9 +299,6 @@ class PrimeLocationScraper(PropertyScraper):
             number_of_bedrooms=bedrooms,
             number_of_bathrooms=bathrooms,
             is_rental=is_rent,
-            is_shared_accomodation=is_shared,
-            is_student=is_stud,
-            is_furnished=is_furnish,
             price_for_sale=price_sale,
             price_per_month_gbp=price_per_month,
             property_type=propert_type,
