@@ -1,8 +1,6 @@
 import psycopg2
-import sys
-import boto3
-import os
 
+<<<<<<< HEAD
 ENDPOINT="zoopla-primelocation-properties-db.cjp3g463xyzn.eu-west-2.rds.amazonaws.com"
 PORT="5432"
 USR="postgres"
@@ -18,10 +16,21 @@ DBNAME="zoopla-primelocation-properties-db"
 
 try:
     conn = psycopg2.connect(host=ENDPOINT, port=PORT, database=DBNAME, user=USR, password=PWORD)
+=======
+
+try:
+    conn = psycopg2.connect(
+    database="",
+    user="postgres",
+    password="properties-scraper",
+    host="accommodation-202107.cjp3g463xyzn.eu-west-2.rds.amazonaws.com",
+    port="5432"
+    )
+>>>>>>> Optimise connection to RDS.
     cur = conn.cursor()
-    cur.execute(""""CREATE TABLE IF NOT EXISTS properties 
+    cur.execute("""CREATE TABLE IF NOT EXISTS properties 
     (index NUMERIC
-    country text
+    country varchar
     city text
     address text
     post_code text
