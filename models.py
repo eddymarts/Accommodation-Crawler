@@ -6,7 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.sqltypes import DateTime, Float
 from sqlalchemy.pool import QueuePool
 
-
+with open("db_creds.txt", "r") as file:
+    user, password, host, port = file.read().split(",")
 Base = declarative_base()
 
 
@@ -66,7 +67,6 @@ class Property(Base):
         number_of_bedrooms -- {self.number_of_bedrooms}
         number_of_bathrooms -- {self.number_of_bathrooms}
         number_of_receptions -- {self.number_of_receptions}
-        is_furnished -- {self.is_furnished}
         price_per_month_gbp -- {self.price_per_month_gbp}
         price_for_sale -- {self.price_for_sale}
         property_type -- {self.property_type}
@@ -81,7 +81,7 @@ class DB_factory:
     def __init__(self, sqlite_filepath="property_db.sqlite3") -> None:
 
         self.engine = create_engine(
-            f"sqlite:///{sqlite_filepath}",
+            f"postgresql://{user}:{password}@{host}:{port}/",
             echo=False,
             pool_size=20,
             poolclass=QueuePool,
