@@ -1,4 +1,4 @@
-from models import Property, UrlToScrape
+from models import Property_raw, UrlToScrape
 from datetime import datetime
 import multiprocessing
 from functools import partial

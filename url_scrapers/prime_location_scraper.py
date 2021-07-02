@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-from models import Property
+from models import Property_raw
 from url_scrapers.property_scraper import PropertyScraper
 
 
@@ -32,12 +32,10 @@ class PrimeLocationScraper(PropertyScraper):
                 .text.split()[0]
                 .translate({ord(","): ""})
             )
-            area_m2 = 0.092903 * area_sqft
         except:
             area_sqft = None
-            area_m2 = None
 
-        return area_sqft, area_m2
+        return area_sqft
 
     def get_property_features(self) -> list:
         """
@@ -288,12 +286,12 @@ class PrimeLocationScraper(PropertyScraper):
         # Close browser
         self.driver.close()
 
-        scraped_property = Property(
+        scraped_property = Property_raw(
             address=addres,
             post_code=addres.split(", ")[-1].split()[1],
             longitude=lo,
             latitude=la,
-            area_m_2=area_m2,
+            area_sqft=area_sqft,
             number_of_bedrooms=bedrooms,
             number_of_bathrooms=bathrooms,
             number_of_receptions=receptions,
@@ -307,6 +305,7 @@ class PrimeLocationScraper(PropertyScraper):
             agency_phone_number=agent_phone_number,
             google_maps=gmaps_link,
             pictures=picture,
+            is_clean=False
         )
 
         # Save to database

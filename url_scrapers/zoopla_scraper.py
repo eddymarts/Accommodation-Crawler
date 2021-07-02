@@ -1,4 +1,4 @@
-from models import Property
+from models import Property_raw
 from url_scrapers.property_scraper import PropertyScraper
 from bs4 import BeautifulSoup
 import requests
@@ -74,7 +74,7 @@ class ZooplaScraper(PropertyScraper):
         #     data = tag['src']
         # From the source can extract the centre == Long/lat -- but the googlemap isn't loading
 
-    def find_area_m_2(self, web_page):
+    def find_area_sqft(self, web_page):
         return None  # Not on Zoopla
 
     def find_is_rental(self, web_page):
@@ -158,14 +158,14 @@ class ZooplaScraper(PropertyScraper):
 
     def scrape_url(self, url):
         web_page = self.fetch_url(url)
-        scraped_property = Property(
+        scraped_property = Property_raw(
             country=self.find_country(web_page),
             city=self.find_city(web_page),
             address=self.find_address(web_page),
             post_code=self.find_post_code(web_page),
             longitude=self.find_long_lat(web_page),
             latitude=self.find_long_lat(web_page),
-            area_m_2=self.find_area_m_2(web_page),
+            area_sqf=self.find_area_sqft(web_page),
             number_of_bedrooms=self.find_number_of_bedrooms(web_page),
             number_of_bathrooms=self.find_number_of_bathrooms(web_page),
             is_rental=self.find_is_rental(web_page),
@@ -178,6 +178,7 @@ class ZooplaScraper(PropertyScraper):
             url=url,
             description=self.find_description(web_page),
             pictures=self.find_pictures(web_page),
+            is_clean=False
         )
 
         # print(f"Saving:\n{scraped_property}")
