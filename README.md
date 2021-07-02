@@ -10,6 +10,7 @@ It consists on:
 3. Build a Machine Learning model in order to find a solution for guiding
 accommodation seekers as well as landlords with pricing strategy and more.
 
+
 ## Running the project
 
 The project has two parts:
