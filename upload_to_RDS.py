@@ -1,4 +1,11 @@
 import psycopg2
+import pandas as pd
+import csv
+
+with open('db_creds.txt', mode='r') as db_creds:
+    user, password, host, port = str(db_creds).split()
+
+print(user, password, host, port)
 
 <<<<<<< HEAD
 ENDPOINT="zoopla-primelocation-properties-db.cjp3g463xyzn.eu-west-2.rds.amazonaws.com"
@@ -21,10 +28,10 @@ try:
 try:
     conn = psycopg2.connect(
     database="",
-    user="postgres",
-    password="properties-scraper",
-    host="accommodation-202107.cjp3g463xyzn.eu-west-2.rds.amazonaws.com",
-    port="5432"
+    user=user,
+    password=password,
+    host=host,
+    port=port
     )
 >>>>>>> Optimise connection to RDS.
     cur = conn.cursor()

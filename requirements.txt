@@ -12,3 +12,4 @@ urllib3==1.26.5
 boto3==1.17.101 
 botocore==1.20.101
 psycopg2==2.9.1
+pandas==1.2.5
