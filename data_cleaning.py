@@ -56,7 +56,7 @@ class PropertyCleaning:
     
     def analyse(self):
         """ Prints relevant information about the dataframe. """
-        
+
         self.show()
         self.describe()
         self.info()
@@ -76,7 +76,7 @@ class PropertyCleaning:
     def get_furnished(self):
         """
         Gets if the property is furnished from the description.
-        If there is no information about furnishing, if the property is for sale,
+        If there is no information about furnishing and if the property is for sale,
         it is assumed that it is not furnished.
         """
         
@@ -90,7 +90,7 @@ class PropertyCleaning:
                 """
                 description = description.lower()
 
-                if "unfurnished" in description or "no furnished" in description:
+                if "unfurnished" in description or "no furnished" in description or "not furnished" in description:
                     is_furnish = False
                 elif "furnished" in description:
                     is_furnish = True
@@ -103,6 +103,53 @@ class PropertyCleaning:
         self.properties["is_furnished"] = ~(
             ~ self.properties["is_rental"] & self.properties["is_furnished"].isnull())
 
+    def get_bills(self):
+        """
+        Gets if the property includes bill from the description.
+        If there is no information about bills and if the property is for sale,
+        it is assumed that bills are not included.
+        """
+        
+        def bills_included(description: str) -> bool:
+                """
+                Returns whether bills are included:
+                INPUT: all_details: list of strings, All details of the property
+
+                OUTPUT:
+                    includes_bills: bool
+                """
+                description = description.lower()
+
+                inclusive_strings = ["bills are inclu", "bills inclu",
+                                    "services are inclu", "services included"]
+
+                exclusive_strings = ["bills are  not inclu", "bills not inclu",
+                    "no bills inclu", "services are not inclu", "services not included",
+                    "no services inclu", "not include bills", "not include services",
+                    "n't include bills", "n't include services"]
+
+                includes = False
+                not_includes = False
+
+                for string in inclusive_strings:
+                    includes = (string in description) or includes
+
+                for string in exclusive_strings:
+                    not_includes = (string in description) or not_includes
+
+                if not_includes:
+                    includes_bills = False
+                elif includes:
+                    includes_bills = True
+                else:
+                    includes_bills = None
+
+                return includes_bills
+        
+        self.properties["includes_bills"] = self.properties["description"].apply(bills_included)
+        self.properties["includes_bills"] = ~(
+            ~ self.properties["is_rental"] & self.properties["includes_bills"].isnull())
+            
     def object_to_string(self):
         for column in ["country", "city", "address", "post_code", "property_type", "url",
             "description", "agency", "agency_phone_number", "google_maps", "pictures"]:

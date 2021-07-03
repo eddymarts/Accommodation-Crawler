@@ -1,223 +1,277 @@
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from models import Property_raw
 from url_scrapers.property_scraper import PropertyScraper
-from bs4 import BeautifulSoup
-import requests
 
 
 class ZooplaScraper(PropertyScraper):
-    def __init__(self, db_factory) -> None:
-        super().__init__(db_factory)
+    def __init__(self, db_session) -> None:
         self.property_scraper = "Zoopla"
+        super().__init__(db_session)
 
-    def fetch_url(self, url):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, "html.parser")
-        # print(soup.prettify()[:500])
-        return soup
-
-    def find_country(self, web_page):
-        return "GB"
-
-    def find_city(self, soup):
-        return None
-        # The following isn't always displaying the city
-        tags = [
-            item
-            for item in soup.find_all("span", attrs={"data-testid": "address-label"})
-        ]
-
-        for tag in tags:
-            data = tag.get_text()
-            data = data.split(",")[-1].strip()
-            data = data.split(" ")[0]
-            return data
-
-        return None
-
-    def find_address(self, soup):
+    def quit_popup_alert(self) -> None:
+        """Removes the popup alert and cookies banner from the search browser."""
         try:
-            tags = [
-                item
-                for item in soup.find_all(
-                    "span", attrs={"data-testid": "address-label"}
+            self.driver.find_element_by_xpath(
+                "//button[@aria-label='Close']"
+            ).click()
+        except Exception:
+            pass
+
+        
+        try:
+            self.driver.find_element_by_xpath(
+                "//div[@class='ui-cookie-consent-choose__buttons']/\
+button[@class='ui-button-secondary']").click()
+        except Exception:
+            pass
+
+    def get_area_sqft(self) -> int:
+        """
+        Returns area as an integer in squared feet.
+        """
+        try:
+            area_sqft = float(
+                self.driver.find_element_by_xpath("//span[@data-testid='floorarea-label']")
+                .text.split()[0]
+                .translate({ord(","): ""})
+            )
+        except:
+            area_sqft = None
+
+        return area_sqft
+
+    def get_property_features(self) -> list:
+        """
+        Returns property features.
+        """
+
+        try:
+            property_features = [
+                feature.text
+                for feature in self.driver.find_elements_by_xpath(
+                    "//div[@data-testid='listing-features']//li"
                 )
             ]
 
-            for tag in tags:
-                data = tag.get_text()
-                return data
-        except:
-            return None
+            assert len(property_features) > 0
 
-    def find_post_code(self, soup):
+        except AssertionError:
+            property_features = [None]
+
+        return property_features
+
+    def get_property_description(self) -> str:
+        """
+        Gets property description.
+        """
+        
         try:
-            tags = [
-                item
-                for item in soup.find_all(
-                    "span", attrs={"data-testid": "address-label"}
-                )
-            ]
+            property_description = self.driver.find_element_by_xpath(
+            "//div[@data-testid='listing-description']//span").text
 
-            for tag in tags:
-                data = tag.get_text()
-                data = data.split(",")[-1].strip()
-                data = data.split(" ")[-1]
-                return data
         except:
-            return None
-
-    def find_long_lat(self, web_page):
-        return None
-        # tags = [item for item in soup.find_all('img', attrs={'data-testid' : 'static-google-map'})]
-
-        # for tag in tags:
-        #     data = tag['src']
-        # From the source can extract the centre == Long/lat -- but the googlemap isn't loading
-
-    def find_area_sqft(self, web_page):
-        return None  # Not on Zoopla
-
-    def find_is_rental(self, web_page):
-        return False
-
-    def find_is_shared_accomodation(self, web_page):
-        return False
-
-    def find_is_student(self, web_page):
-        return False
-
-    def find_is_furnished(self, web_page):
-        # https://www.zoopla.co.uk/to-rent/details/54368982/ -- This is furnished -- but would have to parse the description text
-        return None
-
-    def find_price_per_month_gbp(self, soup):
-        return None
-
-    def find_buy_price_gbp(self, soup):
+            property_description = None
+        
+        return property_description
+    
+    def get_beds_baths_receps(self) -> tuple:
+        """
+        Returns number of bedrooms, number of bathrooms and number of receptions.
+        """
         try:
-            prices = [
-                item for item in soup.find_all("span", attrs={"data-testid": "price"})
-            ]
-
-            for price in prices:
-                data = price.get_text()
-                data = data[1:]
-                data = data.replace(",", "")
-                return data
+            bedrooms = int(
+                self.driver.find_element_by_xpath(
+                    "//span[@data-testid='beds-label']"
+                ).text.split()[0]
+            )
         except:
-            return None
+            bedrooms = None
 
-    def find_number_of_bathrooms(self, soup):
         try:
-            baths = [
-                item
-                for item in soup.find_all("span", attrs={"data-testid": "baths-label"})
-            ]
-
-            for tag in baths:
-                baths = tag.get_text()
-                baths = baths.split(" ")[0]
-                return baths
+            bathrooms = int(
+                self.driver.find_element_by_xpath(
+                    "//span[@data-testid='baths-label']"
+                ).text.split()[0]
+            )
         except:
-            return None
+            bathrooms = None
 
-    def find_number_of_bedrooms(self, soup):
         try:
-            beds = [
-                item
-                for item in soup.find_all("span", attrs={"data-testid": "beds-label"})
-            ]
-
-            for p in beds:
-                beds = p.get_text()
-                beds = beds.split(" ")[0]
-                return beds
+            receptions = int(
+                self.driver.find_element_by_xpath(
+                    "//span[@data-testid='receptions-label']"
+                ).text.split()[0]
+            )
         except:
-            return None
+            receptions = None
 
-    def find_property_type(self, web_page):
-        return None
+        return bedrooms, bathrooms, receptions
 
-    def find_description(self, soup):
+    def get_maps(self) -> tuple:
+        """
+        Searches for the Google Maps link of the property.
+
+        INPUT: None
+        OUTPUT:
+            latitude: float
+            longitude: float
+            Google Maps link: string
+        """
         try:
-            tags = [
-                item
-                for item in soup.find_all(
-                    "section", attrs={"data-testid": "page_features_section"}
-                )
+            gmaps_link = self.driver.find_element_by_xpath(
+                "//img[@data-testid='static-google-map']").get_attribute("src")
+
+            latitude, longitude = [
+                float(coord)
+                for coord in gmaps_link.split("png%7C")[1].split("&")[0].split(",")
             ]
-
-            for tag in tags:
-                data = tag.get_text(separator="\n")
-                return data
         except:
-            return None
+            latitude, longitude, gmaps_link = None, None, None
 
-    def find_pictures(self, web_page):
-        return None
+        return latitude, longitude, gmaps_link
+
+    def get_agent(self) -> tuple:
+        """
+        Returns agency name and phone number.
+        """
+        try:
+            agent = self.driver.find_element_by_xpath(
+                "//div[@data-testid='agent-details']//h3").text
+        except:
+            agent = None
+
+        try:
+            agent_phone_number = self.driver.find_element_by_xpath(
+                "//a[@data-testid='agent-phone-cta-link']"
+            ).text.translate({ord(" "): ""})
+        except:
+            agent_phone_number = None
+
+        return agent, agent_phone_number
+
+    def find_pictures(self):
+        num_pictures = int(
+            self.driver.find_element_by_xpath("//div[@id='images-tally']")
+            .text.rstrip()
+            .split()[-1]
+        )
+
+        images = self.driver.find_elements_by_xpath(
+            "//div[@data-testid='gallery-image-slide-wrapper']//img")
+        
+        path = ""
+        for index, image in enumerate(images):
+            src = image.get_attribute("src")
+
+            # download the image
+            path = path + self.download_image(src, index) + ", "
+    
+        return path
 
     def scrape_url(self, url):
-        web_page = self.fetch_url(url)
+        # Open browser
+        options = Options()
+        options.headless = True
+        self.driver = webdriver.Chrome(options=options)
+
+        # Unique identifier used for identifying buckets
+        self.property_id = url.split("details/")[1].split("/")[0]
+
+        # Open new tab
+        self.driver.find_element_by_tag_name("body").send_keys(Keys.CONTROL + "t")
+        self.driver.get(url)
+        self.quit_popup_alert()
+
+        agent, agent_phone_number = self.get_agent()
+        bedrooms, bathrooms, receptions = self.get_beds_baths_receps()
+        area_sqft = self.get_area_sqft()
+        property_features = self.get_property_features()
+        property_description = self.get_property_description()
+        address = self.driver.find_element_by_xpath(
+            "//span[@data-testid='address-label']").text
+        property_details = self.driver.find_element_by_xpath(
+            "//span[@data-testid='title-label']").text
+
+        is_rent = "to rent" in property_details.lower()
+        propert_type = property_details.split("bed ")[1].rsplit(" ")[0]
+        price_description = self.driver.find_element_by_xpath(
+            "//span[@data-testid='price']").text
+
+        if is_rent:
+            price_sale = None
+            if "POA" in price_description.upper():
+                price_per_month = None
+            else:
+                if len(price_description.split()) > 1:
+                    price_per_month = int(
+                        price_description.split()[0].translate(
+                            {ord(i): "" for i in "£,"}
+                        )
+                    )
+                else:
+                    price_per_month = int(
+                        price_description.translate({ord(i): "" for i in "£,"})
+                    )
+        else:
+            price_per_month = None
+            if "POA" in price_description.upper():
+                price_sale = None
+            else:
+                if len(price_description.split()) > 1:
+                    price_sale = int(
+                        price_description.split()[0].translate(
+                            {ord(i): "" for i in "£,"}
+                        )
+                    )
+                else:
+                    price_sale = int(
+                        price_description.translate({ord(i): "" for i in "£,"})
+                    )
+
+        picture = self.find_pictures()
+        la, lo, gmaps_link = self.get_maps()
+
+        all_details = (
+            [property_details]
+            + [property_description]
+            + property_features
+        )
+
+        complete_description = " | "
+        for detail in all_details:
+            complete_description += str(detail) + " | "
+
+        # Close tab
+        self.driver.find_element_by_tag_name("body").send_keys(Keys.CONTROL + "w")
+
+        # Close browser
+        self.driver.close()
+
         scraped_property = Property_raw(
-            country=self.find_country(web_page),
-            city=self.find_city(web_page),
-            address=self.find_address(web_page),
-            post_code=self.find_post_code(web_page),
-            longitude=self.find_long_lat(web_page),
-            latitude=self.find_long_lat(web_page),
-            area_sqf=self.find_area_sqft(web_page),
-            number_of_bedrooms=self.find_number_of_bedrooms(web_page),
-            number_of_bathrooms=self.find_number_of_bathrooms(web_page),
-            is_rental=self.find_is_rental(web_page),
-            is_shared_accomodation=self.find_is_shared_accomodation(web_page),
-            is_student=self.find_is_student(web_page),
-            is_furnished=self.find_is_furnished(web_page),
-            price_per_month_gbp=self.find_price_per_month_gbp(web_page),
-            price_for_sale=self.find_buy_price_gbp(web_page),
-            property_type=self.find_property_type(web_page),
+            address=address,
+            longitude=lo,
+            latitude=la,
+            area_sqft=area_sqft,
+            number_of_bedrooms=bedrooms,
+            number_of_bathrooms=bathrooms,
+            number_of_receptions=receptions,
+            is_rental=is_rent,
+            price_for_sale=price_sale,
+            price_per_month_gbp=price_per_month,
+            property_type=propert_type,
             url=url,
-            description=self.find_description(web_page),
-            pictures=self.find_pictures(web_page),
+            description=complete_description,
+            agency=agent,
+            agency_phone_number=agent_phone_number,
+            google_maps=gmaps_link,
+            pictures=picture,
             is_clean=False
         )
 
-        # print(f"Saving:\n{scraped_property}")
+        # Save to database
         self.save_property(scraped_property)
-
-
-class ZooplaRentScraper(ZooplaScraper):
-    def __init__(self, db_factory) -> None:
-        super().__init__(db_factory)
-        self.property_scraper = "ZooplaRent"
-
-    def find_is_rental(self, web_page):
-        return True
-
-    def find_is_shared_accomodation(self, web_page):
-        return None
-
-    def find_is_student(self, web_page):
-        return None
-
-    def find_is_furnished(self, web_page):
-        # https://www.zoopla.co.uk/to-rent/details/54368982/ -- This is furnished -- but would have to parse the description text
-        return None
-
-    def find_buy_price_gbp(self, soup):
-        return None
-
-    def find_price_per_month_gbp(self, soup):
-        try:
-            prices = [
-                item
-                for item in soup.find_all("span", attrs={"data-testid": "price"})
-                if "pcm" in item.text
-            ]
-
-            for p in prices:
-                final_pcm = p.get_text()
-                final_pcm = final_pcm[1:-4]
-                final_pcm = final_pcm.replace(",", "")
-                return float(final_pcm)
-        except:
-            return None

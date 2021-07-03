@@ -218,7 +218,7 @@ class PrimeLocationScraper(PropertyScraper):
 
         agent, agent_phone_number = self.get_agent()
         bedrooms, bathrooms, receptions = self.get_beds_baths_receps()
-        area_sqft, area_m2 = self.get_area_sqft()
+        area_sqft = self.get_area_sqft()
         property_features = self.get_property_features()
         property_info = self.get_property_info()
         property_description = self.get_property_description()
