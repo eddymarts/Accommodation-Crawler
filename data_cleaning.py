@@ -88,10 +88,29 @@ for column in ["is_rental", "is_shared_accomodation", "is_student"]:
 
 Properties["updated_date"] = pd.to_datetime(Properties["updated_date"])
 Properties["is_furnished"] = ~(~ Properties["is_rental"] & Properties["is_furnished"].isnull())
-Properties.loc[Properties["area_m_2"]==0, "area_m_2"] = None
+Properties.loc[Properties["area_sqft"]==0, "area_sqft"] = None
 Properties.to_csv("properties_db.csv")
 
-
+# setting up the db
+user = 'postgres' 
+password = 'postgres' 
+host = 'localhost' 
+port = '5432' 
+db_name = 'postgres' 
+db_string = f"postgresql://{user}:{password}@{host}:{port}/{db_name}" 
+​
+with open("db_creds.txt", "r") as file:
+    user, password, host, port = file.read().split(",")
+conn = psycopg2.connect(database="", user=user, password=password, host=host, port=port)
+# create engine
+db = create_engine(db_string) 
+​
+# open json file
+with open('vets.json') as f:
+    df = pd.read_json(f, orient='records')
+​
+# insert data to db
+df.to_sql('vets', db)
 
 class PropertyCleaning:
     """ Class for the process of cleaning property data. """

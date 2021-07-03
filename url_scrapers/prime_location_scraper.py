@@ -235,7 +235,7 @@ class PrimeLocationScraper(PropertyScraper):
 
         if is_rent:
             price_sale = None
-            propert_type, addres = property_details.split(" to rent in ")
+            propert_type, address = property_details.split(" to rent in ")
             if "POA" in price_description.upper():
                 price_per_month = None
             else:
@@ -251,7 +251,7 @@ class PrimeLocationScraper(PropertyScraper):
                     )
         else:
             price_per_month = None
-            propert_type, addres = property_details.split(" for sale in ")
+            propert_type, address = property_details.split(" for sale in ")
             if "POA" in price_description.upper():
                 price_sale = None
             else:
@@ -287,8 +287,7 @@ class PrimeLocationScraper(PropertyScraper):
         self.driver.close()
 
         scraped_property = Property_raw(
-            address=addres,
-            post_code=addres.split(", ")[-1].split()[1],
+            address=address,
             longitude=lo,
             latitude=la,
             area_sqft=area_sqft,
