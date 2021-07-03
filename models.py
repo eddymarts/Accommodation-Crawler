@@ -77,14 +77,20 @@ class DB_factory:
     def __init__(self) -> None:
         with open("db_creds.txt", "r") as file:
             user, password, host, port = file.read().split(",")
+        
+        self.db = f"postgresql://{user}:{password}@{host}:{port}/"
+        self.creds = {'user': user,
+                        'password': password,
+                        'host': host,
+                        'port': port}
 
         self.engine = create_engine(
-            f"postgresql://{user}:{password}@{host}:{port}/",
+            self.db,
             echo=False,
             pool_size=20,
             poolclass=QueuePool,
         )
-        # self.engine = create_engine(f"sqlite:///{sqlite_filepath}", echo=True)
+        # self.engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/", echo=True)
         Base.metadata.create_all(self.engine)
         self.session = sessionmaker(bind=self.engine)
 

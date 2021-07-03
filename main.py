@@ -1,11 +1,9 @@
 import sys
 from url_finders.zoopla_url_finder import ZooplaUrlFinder, ZooplaRentUrlFinder
 from url_finders.prime_location_url_finder import PrimeLocationUrlFinder
-
 from url_scrapers.zoopla_scraper import ZooplaRentScraper, ZooplaScraper
 from url_scrapers.prime_location_scraper import PrimeLocationScraper
-
-
+from data_cleaning import PropertyCleaning
 from models import DB_factory
 import time
 
@@ -75,6 +73,19 @@ def scrape_urls():
         print(
             f"\n\nWaiting for 5 seconds before scraping next {number_to_scrape} urls.\n\n"
         )
+
+def clean_data():
+    db_factory = setup_pooled_db_for_multitasking()
+    property_data = PropertyCleaning(db_factory)
+    property_data.analyse()
+    property_data.clean()
+    property_data.analyse()
+
+    # Check for missing values using missingno
+    # Data Imputation
+
+    # Check for duplicates and appropriate aggregate way of resolving them
+
 
 
 VALID_ARGUMENTS = ["scrape", "fetch", "clean"]
