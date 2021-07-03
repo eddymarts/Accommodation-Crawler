@@ -44,18 +44,18 @@ class ZooplaUrlFinder(UrlFinder):
         ]
         return urls
 
-    def generate_url_for_region(self, region, page_number):
-        return f"https://www.zoopla.co.uk/for-sale/property/{region}/?page_size=50&q={region}&radius=0&results_sort=newest_listings&pn={page_number}"
+    def generate_url_for_region(self, option, region, page_number):
+        return f"https://www.zoopla.co.uk/{option}/property/{region}/?page_size=50&q={region}&radius=0&results_sort=newest_listings&pn={page_number}"
 
-    def scrape_URLs_for_region(self, region):
-        print(f"\n\nBEGINNING SCRAPING FOR {region}\n")
+    def scrape_URLs_for_region(self, option, region):
+        print(f"\n\nBEGINNING SCRAPING {option} PROPERTIES IN {region}\n")
 
         page_number = 0
         end_of_search = False
 
         while not end_of_search:
             page_number = page_number + 1
-            url = self.generate_url_for_region(region, page_number)
+            url = self.generate_url_for_region(option, region, page_number)
 
             web_page = self.fetch_url(url)
 
@@ -63,18 +63,10 @@ class ZooplaUrlFinder(UrlFinder):
             if len(sub_pages) == 0:
                 end_of_search = True
             self.save_urls_to_db(sub_pages)
-        print(f"Finished scraping for {region}")
+        print(f"Finished scraping for {option} properties in {region}")
 
     def find(self):
         # finds URLs and saves them to the DB.
-        for region in areas_of_UK:
-            self.scrape_URLs_for_region(region)
-
-
-class ZooplaRentUrlFinder(ZooplaUrlFinder):
-    def __init__(self, db_session) -> None:
-        super().__init__(db_session)
-        self.parser_to_use = "ZooplaRent"
-
-    def generate_url_for_region(self, region, page_number):
-        return f"https://www.zoopla.co.uk/to-rent/property/{region}/?page_size=50&q={region}&radius=0&results_sort=newest_listings&pn={page_number}&price_frequency=per_month"
+        for option in ["to-rent", "for-sale"]:
+            for region in areas_of_UK:
+                self.scrape_URLs_for_region(option, region)

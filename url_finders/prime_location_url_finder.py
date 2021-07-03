@@ -50,11 +50,10 @@ page_size=50&search_source=refine&radius=0&view_type=grid&pn={page}")
         areas_of_UK = ["London", "South East England", "East Midlands", "East of England", "North East England", "North West England", "South West England", "West Midlands", "Yorkshire and The Humber", "Isle of Man", "Channel Isles", "Scotland", "Wales", "Northern Ireland"]
         regions = [region.replace(" ", "-") for region in areas_of_UK]
 
-        for option in ["for-sale", "to-rent"]:
+        for option in ["to-rent", "for-sale"]:
             print(f"\nFetching {option} properties in {self.url_to_scrape}\n")
 
             for region in regions:
-                page = 1
                 print(f"\nFetching properties in {region}\n")
                 self.get_links(option, region)
 

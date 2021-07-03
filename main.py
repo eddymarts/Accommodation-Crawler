@@ -1,7 +1,7 @@
 import sys
-from url_finders.zoopla_url_finder import ZooplaUrlFinder, ZooplaRentUrlFinder
+from url_finders.zoopla_url_finder import ZooplaUrlFinder
 from url_finders.prime_location_url_finder import PrimeLocationUrlFinder
-from url_scrapers.zoopla_scraper import ZooplaRentScraper, ZooplaScraper
+from url_scrapers.zoopla_scraper import ZooplaScraper
 from url_scrapers.prime_location_scraper import PrimeLocationScraper
 from data_cleaning import PropertyCleaning
 from models import DB_factory
@@ -22,18 +22,11 @@ def setup_pooled_db_for_multitasking():
 def fetch_urls():
     db_session = setup_db()
     try:
-        zoopla_url_finder = ZooplaRentUrlFinder(db_session)
-        zoopla_url_finder.find()
-    except Exception as error:
-        print(f"Got error:{error}")
-        print(f"Failed to scrape all ZooplaRentUrls")
-
-    try:
         zoopla_url_finder = ZooplaUrlFinder(db_session)
         zoopla_url_finder.find()
     except Exception as error:
         print(f"Got error:{error}")
-        print(f"Failed to scrape all ZooplaBuyUrls")
+        print(f"Failed to scrape all ZooplaUrls")
 
     try:
         prime_location_finder = PrimeLocationUrlFinder(db_session)
@@ -47,13 +40,6 @@ def scrape_urls():
     db_factory = setup_pooled_db_for_multitasking()
     number_to_scrape = 10000
     while True:
-        try:
-            zoopla_rent_scraper = ZooplaRentScraper(db_factory)
-            zoopla_rent_scraper.scrape(number_to_scrape)
-        except Exception as error:
-            print(f"Got error:{error}")
-            print(f"Failed to scrape ZooplaRent URLs")
-
         try:
             zoopla_scraper = ZooplaScraper(db_factory)
             zoopla_scraper.scrape(number_to_scrape)
