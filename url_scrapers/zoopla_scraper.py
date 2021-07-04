@@ -268,6 +268,6 @@ button[@class='ui-button-secondary']").click()
             pictures=picture,
             is_clean=False
         )
-        print(scraped_property)
-        # # Save to database
-        # self.save_property(scraped_property)
+        
+        # Save to database
+        self.save_property(scraped_property)
