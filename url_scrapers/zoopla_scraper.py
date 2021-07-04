@@ -156,15 +156,18 @@ button[@class='ui-button-secondary']").click()
         return agent, agent_phone_number
 
     def find_pictures(self):
-        images = self.driver.find_elements_by_xpath(
-            "//li[@data-testid='gallery-image']")
-        
-        path = ""
-        for index, image in enumerate(images):
-            src = image.find_element_by_xpath("//img").get_attribute("src")
+        try:
+            images = self.driver.find_elements_by_xpath(
+                "//li[@data-testid='gallery-image']")
+            
+            path = ""
+            for index, image in enumerate(images):
+                src = image.find_element_by_xpath("//img").get_attribute("src")
 
-            # download the image
-            path = path + self.download_image(src, index) + ", "
+                # download the image
+                path = path + self.download_image(src, index) + ", "
+        except:
+            path = "No pictures uploaded."
     
         return path
 

@@ -177,30 +177,34 @@ class PrimeLocationScraper(PropertyScraper):
         return agent, agent_phone_number
 
     def find_pictures(self):
-        num_pictures = int(
-            self.driver.find_element_by_xpath("//div[@id='images-tally']")
-            .text.rstrip()
-            .split()[-1]
-        )
-
-        path = ""
-        while True:
-            downloaded_image = int(
-                self.driver.find_element_by_xpath("//span[@id='images-num']").text
+        try:
+            num_pictures = int(
+                self.driver.find_element_by_xpath("//div[@id='images-tally']")
+                .text.rstrip()
+                .split()[-1]
             )
 
-            src = self.driver.find_element_by_xpath(
-                "//div[@id='images-main']//img"
-            ).get_attribute("src")
+            path = ""
+            while True:
+                downloaded_image = int(
+                    self.driver.find_element_by_xpath("//span[@id='images-num']").text
+                )
 
-            # download the image
-            path = path + self.download_image(src, downloaded_image) + ", "
+                src = self.driver.find_element_by_xpath(
+                    "//div[@id='images-main']//img"
+                ).get_attribute("src")
+
+                # download the image
+                path = path + self.download_image(src, downloaded_image) + ", "
+                
+                if downloaded_image >= num_pictures:
+                    break
+
+                self.quit_popup_alert()
+                self.driver.find_element_by_xpath("//a[@id='images-nav-next']").click()
+        except:
+            path = "No pictures uploaded."
             
-            if downloaded_image >= num_pictures:
-                break
-
-            self.quit_popup_alert()
-            self.driver.find_element_by_xpath("//a[@id='images-nav-next']").click()
         return path
 
     def scrape_url(self, url):
