@@ -99,7 +99,7 @@ class PropertyScraper:
         """
 
         # Bucket already created
-        self.create_bucket()
+        # self.create_bucket()
         path = f"images/{self.property_scraper}/{self.property_id}/image{image_number}.jpg"
         try:
             self.s3r = boto3.resource("s3")
