@@ -42,7 +42,7 @@ class PropertyScraper:
         self.db_factory = db_factory
 
 
-        with open("db_creds.txt", "r") as file:
+        with open("dl_creds.txt", "r") as file:
             self.bucket = file.read() # S3 bucket
 
     def create_bucket(self):
@@ -99,8 +99,8 @@ class PropertyScraper:
         """
 
         # Bucket already created
-        # self.create_bucket()
-        path = f"/images/{self.property_scraper}/{self.property_id}/image{image_number}.jpg"
+        self.create_bucket()
+        path = f"images/{self.property_scraper}/{self.property_id}/image{image_number}.jpg"
         try:
             self.s3r = boto3.resource("s3")
             self.s3r.meta.client.upload_file(image, self.bucket, path)

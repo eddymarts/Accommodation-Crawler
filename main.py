@@ -26,14 +26,14 @@ def fetch_urls():
         zoopla_url_finder.find()
     except Exception as error:
         print(f"Got error:{error}")
-        print(f"Failed to scrape all ZooplaUrls")
+        print(f"Failed to scrape all Zoopla Urls")
 
     try:
         prime_location_finder = PrimeLocationUrlFinder(db_session)
         prime_location_finder.find()
     except Exception as error:
         print(f"Got error:{error}")
-        print(f"Failed to scrape all PrimeLocationUrls")
+        print(f"Failed to scrape all PrimeLocation Urls")
 
 
 def scrape_urls():
@@ -45,7 +45,7 @@ def scrape_urls():
             zoopla_scraper.scrape(number_to_scrape)
         except Exception as error:
             print(f"Got error:{error}")
-            print(f"Failed to scrape ZooplaBuy URLs")
+            print(f"Failed to scrape Zoopla URLs")
 
         try:
             prime_location_scraper = PrimeLocationScraper(db_factory)

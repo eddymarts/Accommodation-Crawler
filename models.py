@@ -29,7 +29,6 @@ class Property_raw(Base):
 
     id = Column(Integer, primary_key=True)
     address = Column(String)
-    post_code = Column(String)
     longitude = Column(Float)
     latitude = Column(Float)
     area_sqft = Column(Float)
@@ -53,7 +52,6 @@ class Property_raw(Base):
         return f"""Property raw: 
         id -- {self.id}
         address -- {self.address}
-        post_code -- {self.post_code}
         longitude -- {self.longitude}
         latitude -- {self.latitude}
         area_sqft -- {self.area_sqft}

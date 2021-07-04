@@ -54,7 +54,7 @@ button[@class='ui-button-secondary']").click()
             property_features = [
                 feature.text
                 for feature in self.driver.find_elements_by_xpath(
-                    "//div[@data-testid='listing-features']//li"
+                    "//div[@data-testid='listing_features']//li"
                 )
             ]
 
@@ -72,7 +72,7 @@ button[@class='ui-button-secondary']").click()
         
         try:
             property_description = self.driver.find_element_by_xpath(
-            "//div[@data-testid='listing-description']//span").text
+            "//div[@data-testid='listing_description']//span").text
 
         except:
             property_description = None
@@ -141,7 +141,8 @@ button[@class='ui-button-secondary']").click()
         """
         try:
             agent = self.driver.find_element_by_xpath(
-                "//div[@data-testid='agent-details']//h3").text
+                "//div[@data-testid='agent-details']//h3").text.split(
+                    "\nView agent properties")[0]
         except:
             agent = None
 
@@ -155,18 +156,12 @@ button[@class='ui-button-secondary']").click()
         return agent, agent_phone_number
 
     def find_pictures(self):
-        num_pictures = int(
-            self.driver.find_element_by_xpath("//div[@id='images-tally']")
-            .text.rstrip()
-            .split()[-1]
-        )
-
         images = self.driver.find_elements_by_xpath(
-            "//div[@data-testid='gallery-image-slide-wrapper']//img")
+            "//li[@data-testid='gallery-image']")
         
         path = ""
         for index, image in enumerate(images):
-            src = image.get_attribute("src")
+            src = image.find_element_by_xpath("//img").get_attribute("src")
 
             # download the image
             path = path + self.download_image(src, index) + ", "
@@ -196,11 +191,12 @@ button[@class='ui-button-secondary']").click()
             "//span[@data-testid='address-label']").text
         property_details = self.driver.find_element_by_xpath(
             "//span[@data-testid='title-label']").text
-
-        is_rent = "to rent" in property_details.lower()
-        propert_type = property_details.split("bed ")[1].rsplit(" ")[0]
         price_description = self.driver.find_element_by_xpath(
             "//span[@data-testid='price']").text
+        is_rent = "to rent" in property_details.lower()
+        propert_type = property_details.rsplit(' ', 3)[0]
+        if "bed" in propert_type:
+            propert_type = propert_type.split("bed ")[1]
 
         if is_rent:
             price_sale = None
@@ -272,6 +268,6 @@ button[@class='ui-button-secondary']").click()
             pictures=picture,
             is_clean=False
         )
-
-        # Save to database
-        self.save_property(scraped_property)
+        print(scraped_property)
+        # # Save to database
+        # self.save_property(scraped_property)
