@@ -18,7 +18,7 @@ class UrlToScrape(Base):
     parser_to_use = Column(
         String
     )  # Category - so we can scrape multiple sites easily -- can just parse the URL when it's fetched
-    scraped_yet = Column(String, default=False, nullable=False)
+    scraped_yet = Column(Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return f"{self.id}-{self.url}"
