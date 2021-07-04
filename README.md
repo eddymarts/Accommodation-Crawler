@@ -69,11 +69,6 @@ select count(distinct url) from properties; -- number of distinct properties scr
  select count(url) from urls_to_scrape
  where url not in (select distinct url from properties);
 
-
--- clean data
-delete from properties where price_per_month_gbp is NULL;
-delete from properties where description is NULL;
-
 UPDATE urls_to_scrape SET scraped_yet = 0 WHERE url not in (select distinct url from properties);
 
 -- Distinct roots of URLs to be scraped
