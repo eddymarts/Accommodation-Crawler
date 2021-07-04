@@ -181,6 +181,7 @@ class PropertyCleaning:
         self.object_to_bool()
         self.object_to_string()
 
+        # If area is null, check for area in description
         # Check for missing values using missingno
         # Data Imputation
 
