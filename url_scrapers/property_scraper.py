@@ -116,7 +116,7 @@ class PropertyScraper:
         query = (
             db_session.query(UrlToScrape)
             .filter_by(parser_to_use=self.property_scraper)
-            .filter_by(scraped_yet=False)  # default value is false
+            .filter_by(scraped_yet='false')  # default value is false
         )
 
         urls = query[:number_to_scrape]  # Limit it to just the ones to scrape
