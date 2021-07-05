@@ -47,10 +47,6 @@ Then need to add a scraper that takes one of those URLs and scrapes it for prope
 
 
 ## Helpful SQL:
-query_local_db.py to query the local sqlite
-For the moment it is set to drop the properties table
-and reset scrape_yet column in the URLs table.
-(DO NOT RUN THIS FILE WITHOUT VERIFYING.)
 
 ```SQL
 -- if you end a run in the middle of scraping, some results will still be marked as 'CURRENTLY_SCRAPING'

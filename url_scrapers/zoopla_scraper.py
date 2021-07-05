@@ -29,6 +29,16 @@ class ZooplaScraper(PropertyScraper):
 button[@class='ui-button-secondary']").click()
         except Exception:
             pass
+    
+    def get_address(self) -> str:
+        """ Returns address as a string. """
+        try:
+            address = self.driver.find_element_by_xpath(
+                "//span[@data-testid='address-label']").text
+        except:
+            address = None
+        
+        return address
 
     def get_area_sqft(self) -> int:
         """
@@ -185,13 +195,12 @@ button[@class='ui-button-secondary']").click()
         self.driver.get(url)
         self.quit_popup_alert()
 
+        address = self.get_address()
         agent, agent_phone_number = self.get_agent()
         bedrooms, bathrooms, receptions = self.get_beds_baths_receps()
         area_sqft = self.get_area_sqft()
         property_features = self.get_property_features()
         property_description = self.get_property_description()
-        address = self.driver.find_element_by_xpath(
-            "//span[@data-testid='address-label']").text
         property_details = self.driver.find_element_by_xpath(
             "//span[@data-testid='title-label']").text
         price_description = self.driver.find_element_by_xpath(
