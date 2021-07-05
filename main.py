@@ -7,17 +7,14 @@ from data_cleaning import PropertyCleaning
 from models import DB_factory
 import time
 
-
 # https://docs.sqlalchemy.org/en/14/orm/tutorial.html
 def setup_db():
     db = DB_factory()
     return db.get_session()
 
-
 def setup_pooled_db_for_multitasking():
     db_factory = DB_factory()
     return db_factory
-
 
 def fetch_urls():
     db_session = setup_db()
@@ -34,7 +31,6 @@ def fetch_urls():
     except Exception as error:
         print(f"Got error:{error}")
         print(f"Failed to scrape all PrimeLocation Urls")
-
 
 def scrape_urls():
     db_factory = setup_pooled_db_for_multitasking()
@@ -67,15 +63,7 @@ def clean_data():
     property_data.clean()
     property_data.analyse()
 
-    # Check for missing values using missingno
-    # Data Imputation
-
-    # Check for duplicates and appropriate aggregate way of resolving them
-
-
-
 VALID_ARGUMENTS = ["scrape", "fetch", "clean"]
-
 
 def get_argument():
     argument = "fetch_URLs"
