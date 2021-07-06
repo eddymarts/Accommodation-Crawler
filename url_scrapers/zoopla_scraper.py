@@ -54,6 +54,16 @@ button[@class='ui-button-secondary']").click()
             area_sqft = None
 
         return area_sqft
+    
+    def get_details(self) -> str:
+        """ Returns property details as a string. """
+        try:
+            property_details = self.driver.find_element_by_xpath(
+                "//span[@data-testid='title-label']").text
+        except:
+            property_details = None
+        
+        return property_details
 
     def get_property_features(self) -> list:
         """
@@ -201,8 +211,7 @@ button[@class='ui-button-secondary']").click()
         area_sqft = self.get_area_sqft()
         property_features = self.get_property_features()
         property_description = self.get_property_description()
-        property_details = self.driver.find_element_by_xpath(
-            "//span[@data-testid='title-label']").text
+        property_details = self.get_details()
         price_description = self.driver.find_element_by_xpath(
             "//span[@data-testid='price']").text
         is_rent = "to rent" in property_details.lower()
