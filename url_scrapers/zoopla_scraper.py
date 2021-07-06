@@ -55,15 +55,22 @@ button[@class='ui-button-secondary']").click()
 
         return area_sqft
     
-    def get_details(self) -> str:
+    def get_details(self) -> tuple:
         """ Returns property details as a string. """
         try:
             property_details = self.driver.find_element_by_xpath(
                 "//span[@data-testid='title-label']").text
         except:
             property_details = None
+
+        try:
+            propert_type = property_details.rsplit(' ', 3)[0]
+            if "bed" in propert_type:
+                propert_type = propert_type.split("bed ")[1]
+        except:
+            property_type = None          
         
-        return property_details
+        return property_details, property_type
 
     def get_property_features(self) -> list:
         """
@@ -211,13 +218,10 @@ button[@class='ui-button-secondary']").click()
         area_sqft = self.get_area_sqft()
         property_features = self.get_property_features()
         property_description = self.get_property_description()
-        property_details = self.get_details()
+        property_details, property_type = self.get_details()
         price_description = self.driver.find_element_by_xpath(
             "//span[@data-testid='price']").text
-        is_rent = "to rent" in property_details.lower()
-        propert_type = property_details.rsplit(' ', 3)[0]
-        if "bed" in propert_type:
-            propert_type = propert_type.split("bed ")[1]
+        is_rent = "to rent" in property_details.lower() or "to-rent" in url
 
         if is_rent:
             price_sale = None
@@ -280,7 +284,7 @@ button[@class='ui-button-secondary']").click()
             is_rental=is_rent,
             price_for_sale=price_sale,
             price_per_month_gbp=price_per_month,
-            property_type=propert_type,
+            property_type=property_type,
             url=url,
             description=complete_description,
             agency=agent,

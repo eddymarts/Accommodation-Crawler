@@ -231,7 +231,7 @@ class PrimeLocationScraper(PropertyScraper):
             "//h1[@class='listing-details-h1']"
         ).text
 
-        is_rent = "to rent" in property_details.lower()
+        is_rent = "to rent" in property_details.lower() or "to-rent" in url
 
         price_description = self.driver.find_element_by_xpath(
             "//span[@class='price']"
