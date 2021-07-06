@@ -34,7 +34,7 @@ def fetch_urls():
 
 def scrape_urls():
     db_factory = setup_pooled_db_for_multitasking()
-    number_to_scrape = 20000
+    number_to_scrape = 100000
     while True:
         try:
             prime_location_scraper = PrimeLocationScraper(db_factory)

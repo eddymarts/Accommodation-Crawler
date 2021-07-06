@@ -137,3 +137,6 @@ dmypy.json
 # Datasets
 *.csv
 *.txt
+
+# EC2 Keys
+*.pem
