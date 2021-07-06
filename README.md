@@ -40,6 +40,18 @@ $ source env/bin/activate
 $ pip3 install -r requirements.txt
 ```
 
+## Setting up EC2
+```bash
+$ sudo ssh -i ./AiCore/Projects/Accommodation-Crawler/accommodation-202107.pem ec2-user@ec2-3-10-199-200.eu-west-2.compute.amazonaws.com
+```
+Make sure the multithreaded_scraper == False on property_scraper.py
+
+On EC2:
+```bash
+$ source my_app/env/bin/activate
+$ pip3 install -r requirements.txt
+```
+
 ## Extensibility
 To add new scrapers need to add a url-finder that fetches URLs of individual properties to scrape. Along with the type of scraper to use to scrape those individual properties. e.g: url_finders/zoopla_url_finder.py-ZooplaUrlFinder   
 

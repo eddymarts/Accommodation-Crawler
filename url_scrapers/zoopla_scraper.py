@@ -193,6 +193,7 @@ button[@class='ui-button-secondary']").click()
 
                 # download the image
                 path = path + self.download_image(src, index) + ", "
+            path = path.rstrip(", ")
         except:
             path = "No pictures uploaded."
     

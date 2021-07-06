@@ -179,7 +179,7 @@ class PropertyScraper:
                 mark_as_failed_scraping(url_obj)
 
         # Multithreading
-        multithreaded_scraper = False
+        multithreaded_scraper = True
         # Change this to False if multithreading is causing issues such as concurrency locks
         # multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
 

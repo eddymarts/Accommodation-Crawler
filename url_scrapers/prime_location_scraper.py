@@ -202,6 +202,8 @@ class PrimeLocationScraper(PropertyScraper):
 
                 self.quit_popup_alert()
                 self.driver.find_element_by_xpath("//a[@id='images-nav-next']").click()
+            
+            path = path.rstrip(", ")
         except:
             path = "No pictures uploaded."
             
