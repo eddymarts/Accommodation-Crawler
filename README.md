@@ -51,8 +51,8 @@ Then need to add a scraper that takes one of those URLs and scrapes it for prope
 ```SQL
 -- if you end a run in the middle of scraping, some results will still be marked as 'CURRENTLY_SCRAPING'
 -- cleanup with the following:
-UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'CURRENTLY_SCRAPING';
-UPDATE urls_to_scrape SET scraped_yet = 0 WHERE scraped_yet = 'FAILED';
+UPDATE urls_to_scrape SET scraped_yet = 'false' WHERE scraped_yet = 'CURRENTLY_SCRAPING';
+UPDATE urls_to_scrape SET scraped_yet = 'false' WHERE scraped_yet = 'FAILED';
 
 select distinct scraped_yet from urls_to_scrape limit 5;
 
