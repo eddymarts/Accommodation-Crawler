@@ -36,19 +36,19 @@ def scrape_urls():
     db_factory = setup_pooled_db_for_multitasking()
     number_to_scrape = 100000
     while True:
-        # try:
-        prime_location_scraper = PrimeLocationScraper(db_factory)
-        prime_location_scraper.scrape(number_to_scrape)
-        # except Exception as error:
-        #     print(f"Got error:{error}")
-        #     print(f"Failed to scrape PrimeLocation URLs")
+        try:
+            prime_location_scraper = PrimeLocationScraper(db_factory)
+            prime_location_scraper.scrape(number_to_scrape)
+        except Exception as error:
+            print(f"Got error:{error}")
+            print(f"Failed to scrape PrimeLocation URLs")
 
-        # try:
-        #     zoopla_scraper = ZooplaScraper(db_factory)
-        #     zoopla_scraper.scrape(number_to_scrape)
-        # except Exception as error:
-        #     print(f"Got error:{error}")
-        #     print(f"Failed to scrape Zoopla URLs")
+        try:
+            zoopla_scraper = ZooplaScraper(db_factory)
+            zoopla_scraper.scrape(number_to_scrape)
+        except Exception as error:
+            print(f"Got error:{error}")
+            print(f"Failed to scrape Zoopla URLs")
 
         # scrape 1000 at a time with a wait in between in-case the queue is empty.
         time.sleep(5)
