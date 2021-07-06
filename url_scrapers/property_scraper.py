@@ -168,15 +168,15 @@ class PropertyScraper:
             self.property_id = url
             print(f"\n{self.property_scraper} scraping url {url}")
 
-            try:
-                mark_as_currently_scraping(url_obj)
-                self.scrape_url(url)
-                mark_as_finished_scraping(url_obj)
+            # try:
+            mark_as_currently_scraping(url_obj)
+            self.scrape_url(url)
+            mark_as_finished_scraping(url_obj)
 
-            except Exception as error:
-                print(f"Got error:{error}")
-                print(f"Failed to scrape URL: {url}")
-                mark_as_failed_scraping(url_obj)
+            # except Exception as error:
+            #     print(f"Got error:{error}")
+            #     print(f"Failed to scrape URL: {url}")
+            #     mark_as_failed_scraping(url_obj)
 
         # Multithreading
         multithreaded_scraper = False
