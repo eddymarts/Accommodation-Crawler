@@ -64,9 +64,9 @@ button[@class='ui-button-secondary']").click()
             property_details = None
 
         try:
-            propert_type = property_details.rsplit(' ', 3)[0]
-            if "bed" in propert_type:
-                propert_type = propert_type.split("bed ")[1]
+            property_type = property_details.rsplit(' ', 3)[0]
+            if "bed" in property_type:
+                property_type = property_type.split("bed ")[1]
         except:
             property_type = None          
         
