@@ -180,6 +180,8 @@ class PropertyCleaning:
         self.get_furnished()
         self.object_to_bool()
         self.object_to_string()
+        # Postcode
+        # Bills
         # Check FAILED scrapes
             # 1. Zoopla error in address
         # If area is null, check for area in description
