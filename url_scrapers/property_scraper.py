@@ -1,7 +1,6 @@
-from models import Property_raw, UrlToScrape
+from models import UrlToScrape
 from datetime import datetime
 import multiprocessing
-from functools import partial
 import urllib.request
 import boto3
 import os
@@ -179,7 +178,7 @@ class PropertyScraper:
                 mark_as_failed_scraping(url_obj)
 
         # Multithreading
-        multithreaded_scraper = False
+        multithreaded_scraper = True
         # Change this to False if multithreading is causing issues such as concurrency locks
         # multithreaded_scraper = False; # Change this to False if multithreading is causing issues such as concurrency locks
 
