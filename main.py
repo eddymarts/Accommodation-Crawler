@@ -7,7 +7,6 @@ from data_cleaning import PropertyCleaning
 from models import DB_factory
 import time
 
-# https://docs.sqlalchemy.org/en/14/orm/tutorial.html
 def setup_db():
     db = DB_factory()
     return db.get_session()
@@ -64,10 +63,6 @@ def clean_data():
 VALID_ARGUMENTS = ["scrape", "fetch", "clean"]
 
 def get_argument():
-    argument = "fetch_URLs"
-    argument = "scrape"
-    argument = "clean"
-
     args = [arg for arg in sys.argv[1:]]
     if len(args):
         argument = args[0]
