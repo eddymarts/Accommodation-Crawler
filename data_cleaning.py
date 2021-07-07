@@ -47,12 +47,6 @@ class PropertyCleaning:
         """ Prints dataframe.info() """
 
         print(self.properties.info())
-
-    def get_city(self):
-        """ Gets the city from the address. """
-
-        self.properties["city"] = self.properties["address"].apply(
-            lambda x: x.split(", ")[-1].split()[0])
     
     def analyse(self):
         """ Prints relevant information about the dataframe. """
@@ -60,6 +54,26 @@ class PropertyCleaning:
         self.show()
         self.describe()
         self.info()
+
+    def get_city(self):
+        """ Gets the city from the address. """
+
+        self.properties["city"] = self.properties["address"].apply(
+            lambda x: x.split(", ")[-1].split()[0])
+
+    def get_postcode(self):
+        """ Gets postcode from the address. """
+        
+        def find_postcode(address):
+            try:
+                postcode=address.split(", ")[-1].split()[1]
+            except:
+                postcode = None
+            
+            return postcode
+
+        self.properties["postcode"] = self.properties["address"].apply(
+            lambda x: find_postcode(x))
 
     def get_shared(self):
         """ Gets if the property is shared from the description. """
@@ -151,45 +165,53 @@ class PropertyCleaning:
             ~ self.properties["is_rental"] & self.properties["includes_bills"].isnull())
             
     def object_to_string(self):
-        for column in ["country", "city", "address", "post_code", "property_type", "url",
+        for column in ["country", "city", "address", "postcode", "property_type", "url",
             "description", "agency", "agency_phone_number", "google_maps", "pictures"]:
             self.properties[column] = self.properties[column].astype(str)
 
     def object_to_category(self):
-        for column in ["country", "city", "address", "post_code", 
+        for column in ["country", "city", "address", "postcode", 
             "property_type", "agency", "agency_phone_number"]:
             self.properties[column] = self.properties[column].astype('category')
 
     def object_to_bool(self):
-        for column in ["is_rental", "is_shared_accomodation", "is_student"]:
+        for column in ["is_rental", "is_shared", "is_student", "includes_bills"]:
             self.properties[column] = self.properties[column].astype(bool)
 
     def get_duplicates(self):
         subset = ["address", "latitude", "longitude"]
 
+    def upload_to_db(self):
+        self.properties.to_sql('properties_clean', self.db.engine, if_exists='append')
+
     def clean(self):
         """ Cleans data in the properties dataframe. """
 
+        self.analyse()
         self.properties.loc[self.properties["area_sqft"]==0, "area_sqft"] = None
         self.properties.dropna(how='all', inplace = True)
         self.properties["updated_date"] = pd.to_datetime(self.properties["updated_date"])
         self.properties["country"] = "United Kingdom"
         self.get_city()
+        self.get_postcode()
         self.get_shared()
         self.get_student()
         self.get_furnished()
+        self.get_bills()
         self.object_to_bool()
         self.object_to_string()
-        # Postcode
-        # Bills
-        # Check FAILED scrapes
-            # 1. Zoopla error in address
+        self.properties = self.properties[["property_type", "is_rental", "price_for_sale",
+            "price_per_month_gbp", "area_sqft", "city", "postcode", "address", "number_of_bedrooms",
+            "number_of_bathrooms", "number_of_receptions", "longitude", "latitude",
+            "country", "is_furnished", "is_shared", "is_student", "includes_bills",
+            "google_maps", "agency", "agency_phone_number", "pictures", "url", "description",
+            "updated_date"]]
+
+        self.analyse()
+        self.upload_to_db()
+
         # If area is null, check for area in description
         # Check for missing values using missingno
         # Data Imputation
 
         # Check for duplicates and appropriate aggregate way of resolving them
-
-
-    def upload_to_db(self):
-        self.properties.to_sql('properties_clean', self.db.engine, if_exists='append')

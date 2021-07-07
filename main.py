@@ -59,9 +59,7 @@ def scrape_urls():
 def clean_data():
     db_factory = setup_pooled_db_for_multitasking()
     property_data = PropertyCleaning(db_factory)
-    property_data.analyse()
     property_data.clean()
-    property_data.analyse()
 
 VALID_ARGUMENTS = ["scrape", "fetch", "clean"]
 
