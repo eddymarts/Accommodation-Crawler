@@ -255,7 +255,7 @@ button[@class='ui-button-secondary']").click()
                         price_description.translate({ord(i): "" for i in "£,"})
                     )
 
-        picture = self.find_pictures()
+        picture = "No picture uploaded." #self.find_pictures()
         la, lo, gmaps_link = self.get_maps()
 
         all_details = (
