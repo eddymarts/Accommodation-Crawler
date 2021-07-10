@@ -19,7 +19,7 @@ class PrimeLocationUrlFinder(UrlFinder):
                 'body').send_keys(Keys.CONTROL + 't') 
             self.driver.get(
         self.url_to_scrape + f"{option}/property/{region}/?\
-page_size=50&search_source=refine&radius=0&view_type=grid&pn={page}")
+page_size=50&search_source=refine&radius=0&view_type=grid&results_sort=newest_listings&pn={page}")
 
             links = self.driver.find_elements_by_xpath(
 "//div[@class='listing-results-wrapper']//a[@class='photo-hover']")
