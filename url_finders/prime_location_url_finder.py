@@ -46,7 +46,6 @@ page_size=50&search_source=refine&radius=0&view_type=grid&pn={page}")
         options = Options()
         options.headless = True
         self.driver = webdriver.Chrome(options=options)
-        self.driver = webdriver.Chrome()
         areas_of_UK = ["London", "South East England", "East Midlands", "East of England", "North East England", "North West England", "South West England", "West Midlands", "Yorkshire and The Humber", "Isle of Man", "Channel Isles", "Scotland", "Wales", "Northern Ireland"]
         regions = [region.replace(" ", "-") for region in areas_of_UK]
 
