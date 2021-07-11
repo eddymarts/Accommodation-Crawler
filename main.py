@@ -18,18 +18,18 @@ def setup_pooled_db_for_multitasking():
 def fetch_urls():
     db_session = setup_db()
     try:
-        zoopla_url_finder = ZooplaUrlFinder(db_session)
-        zoopla_url_finder.find()
-    except Exception as error:
-        print(f"Got error:{error}")
-        print(f"Failed to scrape all Zoopla Urls")
-
-    try:
         prime_location_finder = PrimeLocationUrlFinder(db_session)
         prime_location_finder.find()
     except Exception as error:
         print(f"Got error:{error}")
         print(f"Failed to scrape all PrimeLocation Urls")
+
+    try:
+        zoopla_url_finder = ZooplaUrlFinder(db_session)
+        zoopla_url_finder.find()
+    except Exception as error:
+        print(f"Got error:{error}")
+        print(f"Failed to scrape all Zoopla Urls")
 
 def scrape_urls():
     db_factory = setup_pooled_db_for_multitasking()

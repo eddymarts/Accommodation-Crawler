@@ -21,6 +21,16 @@ class PrimeLocationScraper(PropertyScraper):
             ).click()
         except Exception:
             pass
+    
+    def get_details(self):
+        try:
+            property_details = self.driver.find_element_by_xpath(
+                "//h1[@class='listing-details-h1']"
+            ).text
+        except:
+            property_details = None
+        
+        return property_details
 
     def get_area_sqft(self) -> int:
         """
@@ -90,6 +100,50 @@ class PrimeLocationScraper(PropertyScraper):
             property_description = None
         
         return property_description
+    
+    def get_price_type_address(self, is_rent, property_details) -> tuple:
+        """ Gets price, property type and address and returns a tuple with all. """
+        try:
+            price_description = self.driver.find_element_by_xpath(
+                "//span[@class='price']"
+            ).text
+
+            if is_rent:
+                price_sale = None
+                propert_type, address = property_details.split(" to rent in ")
+                if "POA" in price_description.upper():
+                    price_per_month = None
+                else:
+                    if len(price_description.split()) > 1:
+                        price_per_month = int(
+                            price_description.split()[0].translate(
+                                {ord(i): "" for i in "£,"}
+                            )
+                        )
+                    else:
+                        price_per_month = int(
+                            price_description.translate({ord(i): "" for i in "£,"})
+                        )
+            else:
+                price_per_month = None
+                propert_type, address = property_details.split(" for sale in ")
+                if "POA" in price_description.upper():
+                    price_sale = None
+                else:
+                    if len(price_description.split()) > 1:
+                        price_sale = int(
+                            price_description.split()[0].translate(
+                                {ord(i): "" for i in "£,"}
+                            )
+                        )
+                    else:
+                        price_sale = int(
+                            price_description.translate({ord(i): "" for i in "£,"})
+                        )
+        except:
+            price_per_month, price_sale, propert_type, address = None, None, None, None
+
+        return price_per_month, price_sale, propert_type, address
     
     def get_beds_baths_receps(self) -> tuple:
         """
@@ -228,50 +282,10 @@ class PrimeLocationScraper(PropertyScraper):
         property_features = self.get_property_features()
         property_info = self.get_property_info()
         property_description = self.get_property_description()
-        
-        property_details = self.driver.find_element_by_xpath(
-            "//h1[@class='listing-details-h1']"
-        ).text
-
+        property_details = self.get_details()
         is_rent = "to rent" in property_details.lower() or "to-rent" in url
-
-        price_description = self.driver.find_element_by_xpath(
-            "//span[@class='price']"
-        ).text
-
-        if is_rent:
-            price_sale = None
-            propert_type, address = property_details.split(" to rent in ")
-            if "POA" in price_description.upper():
-                price_per_month = None
-            else:
-                if len(price_description.split()) > 1:
-                    price_per_month = int(
-                        price_description.split()[0].translate(
-                            {ord(i): "" for i in "£,"}
-                        )
-                    )
-                else:
-                    price_per_month = int(
-                        price_description.translate({ord(i): "" for i in "£,"})
-                    )
-        else:
-            price_per_month = None
-            propert_type, address = property_details.split(" for sale in ")
-            if "POA" in price_description.upper():
-                price_sale = None
-            else:
-                if len(price_description.split()) > 1:
-                    price_sale = int(
-                        price_description.split()[0].translate(
-                            {ord(i): "" for i in "£,"}
-                        )
-                    )
-                else:
-                    price_sale = int(
-                        price_description.translate({ord(i): "" for i in "£,"})
-                    )
-
+        price_per_month, price_sale, propert_type, address = self.get_price_type_address(is_rent,
+                                                                                        property_details)
         picture = "No picture uploaded." #self.find_pictures()
         la, lo, gmaps_link = self.get_maps()
 

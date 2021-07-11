@@ -106,6 +106,47 @@ button[@class='ui-button-secondary']").click()
         
         return property_description
     
+    def get_price(self, is_rent) -> tuple:
+        """ Gets price for sale and price per month. Returns a tuple with all. """
+        try:
+            price_description = self.driver.find_element_by_xpath(
+                "//span[@data-testid='price']").text
+
+            if is_rent:
+                price_sale = None
+                if "POA" in price_description.upper():
+                    price_per_month = None
+                else:
+                    if len(price_description.split()) > 1:
+                        price_per_month = int(
+                            price_description.split()[0].translate(
+                                {ord(i): "" for i in "£,"}
+                            )
+                        )
+                    else:
+                        price_per_month = int(
+                            price_description.translate({ord(i): "" for i in "£,"})
+                        )
+            else:
+                price_per_month = None
+                if "POA" in price_description.upper():
+                    price_sale = None
+                else:
+                    if len(price_description.split()) > 1:
+                        price_sale = int(
+                            price_description.split()[0].translate(
+                                {ord(i): "" for i in "£,"}
+                            )
+                        )
+                    else:
+                        price_sale = int(
+                            price_description.translate({ord(i): "" for i in "£,"})
+                        )
+        except:
+            price_sale, price_per_month = None, None
+        
+        return price_sale, price_per_month
+    
     def get_beds_baths_receps(self) -> tuple:
         """
         Returns number of bedrooms, number of bathrooms and number of receptions.
@@ -220,41 +261,8 @@ button[@class='ui-button-secondary']").click()
         property_features = self.get_property_features()
         property_description = self.get_property_description()
         property_details, property_type = self.get_details()
-        price_description = self.driver.find_element_by_xpath(
-            "//span[@data-testid='price']").text
         is_rent = "to rent" in property_details.lower() or "to-rent" in url
-
-        if is_rent:
-            price_sale = None
-            if "POA" in price_description.upper():
-                price_per_month = None
-            else:
-                if len(price_description.split()) > 1:
-                    price_per_month = int(
-                        price_description.split()[0].translate(
-                            {ord(i): "" for i in "£,"}
-                        )
-                    )
-                else:
-                    price_per_month = int(
-                        price_description.translate({ord(i): "" for i in "£,"})
-                    )
-        else:
-            price_per_month = None
-            if "POA" in price_description.upper():
-                price_sale = None
-            else:
-                if len(price_description.split()) > 1:
-                    price_sale = int(
-                        price_description.split()[0].translate(
-                            {ord(i): "" for i in "£,"}
-                        )
-                    )
-                else:
-                    price_sale = int(
-                        price_description.translate({ord(i): "" for i in "£,"})
-                    )
-
+        price_sale, price_per_month = self.get_price(is_rent)
         picture = "No picture uploaded." #self.find_pictures()
         la, lo, gmaps_link = self.get_maps()
 
