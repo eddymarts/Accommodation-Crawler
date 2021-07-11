@@ -101,7 +101,16 @@ class PrimeLocationScraper(PropertyScraper):
         
         return property_description
     
-    def get_price_type_address(self, is_rent, property_details) -> tuple:
+    def get_rent(self, url: str, property_details: str) -> bool:
+        """ Returns bool containing if property is rental or not. """
+        try:
+            is_rent = "to rent" in property_details.lower() or "to-rent" in url
+        except:
+            is_rent = None
+        
+        return is_rent
+    
+    def get_price_type_address(self, is_rent: bool, property_details: str) -> tuple:
         """ Gets price, property type and address and returns a tuple with all. """
         try:
             price_description = self.driver.find_element_by_xpath(
@@ -283,7 +292,7 @@ class PrimeLocationScraper(PropertyScraper):
         property_info = self.get_property_info()
         property_description = self.get_property_description()
         property_details = self.get_details()
-        is_rent = "to rent" in property_details.lower() or "to-rent" in url
+        is_rent = self.get_rent(url, property_details)
         price_per_month, price_sale, propert_type, address = self.get_price_type_address(is_rent,
                                                                                         property_details)
         picture = "No picture uploaded." #self.find_pictures()

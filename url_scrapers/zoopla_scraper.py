@@ -106,6 +106,15 @@ button[@class='ui-button-secondary']").click()
         
         return property_description
     
+    def get_rent(self, url:str, property_details: str) -> bool:
+        """ Returns bool containing if property is rental or not. """
+        try:
+            is_rent = "to rent" in property_details.lower() or "to-rent" in url
+        except:
+            is_rent = None
+        
+        return is_rent
+    
     def get_price(self, is_rent) -> tuple:
         """ Gets price for sale and price per month. Returns a tuple with all. """
         try:
@@ -261,7 +270,7 @@ button[@class='ui-button-secondary']").click()
         property_features = self.get_property_features()
         property_description = self.get_property_description()
         property_details, property_type = self.get_details()
-        is_rent = "to rent" in property_details.lower() or "to-rent" in url
+        is_rent = self.get_rent(url, property_details)
         price_sale, price_per_month = self.get_price(is_rent)
         picture = "No picture uploaded." #self.find_pictures()
         la, lo, gmaps_link = self.get_maps()
