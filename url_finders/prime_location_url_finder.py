@@ -27,12 +27,13 @@ page_size=50&search_source=refine&radius=0&view_type=grid&results_sort=newest_li
                 # Save to database
                 self.save_urls_to_db([link.get_attribute("href") for link in links])
                 self.link_number += len(links)
-                print(f"Page {page}: Scraped first {self.link_number} links.")
+                print(f"{region} {option} properties. Page {page}: Fetched {self.link_number} links.")
                 page += 1
             else: # End of search
                 # Close tab
                 self.driver.find_element_by_tag_name(
                     'body').send_keys(Keys.CONTROL + 'w')
+                print(f"Finished fetching {option} properties in {region}.")
                 break
 
 
@@ -50,10 +51,8 @@ page_size=50&search_source=refine&radius=0&view_type=grid&results_sort=newest_li
         regions = [region.replace(" ", "-") for region in areas_of_UK]
 
         for option in ["to-rent", "for-sale"]:
-            print(f"\nFetching {option} properties in {self.url_to_scrape}\n")
-
             for region in regions:
-                print(f"\nFetching properties in {region}\n")
+                print(f"\nFetching {option} properties in {region}:\n")
                 self.get_links(option, region)
 
         # Close browser

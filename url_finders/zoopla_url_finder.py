@@ -48,7 +48,7 @@ class ZooplaUrlFinder(UrlFinder):
         return f"https://www.zoopla.co.uk/{option}/property/{region}/?page_size=50&q={region}&radius=0&results_sort=newest_listings&pn={page_number}"
 
     def scrape_URLs_for_region(self, option, region):
-        print(f"\n\nBEGINNING SCRAPING {option} PROPERTIES IN {region}\n")
+        print(f"\nFetching {option} properties in {region}:\n")
 
         page_number = 0
         end_of_search = False
@@ -63,7 +63,7 @@ class ZooplaUrlFinder(UrlFinder):
             if len(sub_pages) == 0:
                 end_of_search = True
             self.save_urls_to_db(sub_pages)
-        print(f"Finished scraping for {option} properties in {region}")
+        print(f"Finished fetching {option} properties in {region}.")
 
     def find(self):
         # finds URLs and saves them to the DB.
