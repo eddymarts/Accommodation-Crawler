@@ -73,6 +73,7 @@ def get_argument():
 
     return argument
 
+# Python dash app for front end development
 
 argument = get_argument()
 

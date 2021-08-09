@@ -1,6 +1,7 @@
 import pandas as pd
 import psycopg2
 from pprint import pprint
+from sklearn import preprocessing
 
 class PropertyCleaning:
     """ Class for the process of cleaning property data. """
@@ -20,7 +21,8 @@ class PropertyCleaning:
         
         cursor = conn.cursor()
         cursor.execute("""SELECT * FROM properties_raw
-                        WHERE is_clean = False;""")
+                        WHERE is_clean = False
+                        AND url LIKE '%primelocation%';""")
         column_names = [column[0] for column in cursor.description]
         self.properties = pd.DataFrame(cursor.fetchall(), columns=column_names)
         cursor.execute("""UPDATE properties_raw
@@ -178,9 +180,6 @@ class PropertyCleaning:
         for column in ["is_rental", "is_shared", "is_student", "includes_bills"]:
             self.properties[column] = self.properties[column].astype(bool)
 
-    def get_duplicates(self):
-        subset = ["address", "latitude", "longitude"]
-
     def upload_to_db(self):
         self.properties.to_sql('properties_clean', self.db.engine, if_exists='append')
 
@@ -189,7 +188,8 @@ class PropertyCleaning:
 
         self.analyse()
         self.properties.loc[self.properties["area_sqft"]==0, "area_sqft"] = None
-        self.properties.dropna(how='all', inplace = True)
+        self.properties.dropna(how='all', subset=["address", "price_for_sale",
+                                        "price_per_month_gbp"], inplace = True)
         self.properties["updated_date"] = pd.to_datetime(self.properties["updated_date"])
         self.properties["country"] = "United Kingdom"
         self.get_city()
@@ -208,6 +208,7 @@ class PropertyCleaning:
             "updated_date"]]
 
         self.analyse()
+        self.properties.to_csv("properties.csv")
         self.upload_to_db()
 
         # If area is null, check for area in description
