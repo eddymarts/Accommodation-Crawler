@@ -19,3 +19,11 @@ class BaseModel:
         self.best_model = grid_search.best_estimator_
         self.best_hyperparameters = grid_search.best_params_
         self.fitting_time = grid_search.refit_time_
+
+    def score(self, X_sets, y_sets):
+        """ Returns the score of the tuned model for every set of the data. """
+        score = {}
+        for set in range(len(X_sets)):
+            score[set] = self.best_model.score(X_sets[set], y_sets[set])
+        
+        return score
