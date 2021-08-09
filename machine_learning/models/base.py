@@ -22,8 +22,26 @@ class BaseModel:
 
     def score(self, X_sets, y_sets):
         """ Returns the score of the tuned model for every set of the data. """
-        score = {}
+        self.scores = {}
         for set in range(len(X_sets)):
-            score[set] = self.best_model.score(X_sets[set], y_sets[set])
-        
-        return score
+            self.scores[set] = self.best_model.score(X_sets[set], y_sets[set])
+
+class ModelSelector:
+    def __init__(self, models, X, y) -> None:
+        self.models = {model.__name__: model(X, y) for model in models}
+
+    
+    def get_best_model(self, X_sets, y_sets):
+        max_score = 0
+        for key in self.models.keys():
+            self.models[key].score(X_sets, y_sets)
+
+            if self.models[key].scores[1] > max_score:
+                max_score = self.models[key].scores[1]
+                self.best_model_name = key
+                self.best_model_params = self.models[key].best_hyperparameters
+                self.best_model = self.models[key].best_model
+            
+
+    
+

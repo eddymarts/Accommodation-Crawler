@@ -1,5 +1,8 @@
 import pandas as pd
 from pprint import pprint
+from scale_split import scalesplit
+from models.models import *
+from models.base import ModelSelector
 from get_data import Data
 
 def show(df, max_rows=6, max_columns=None):
@@ -28,6 +31,18 @@ def analyse(df):
     info(df)
 
 properties = Data()
-X, y = properties.load_reg(category='sale', return_X_y=True)
-analyse(X)
-analyse(y)
+
+X_rent, y_rent = properties.load_reg(category='rental', return_X_y=True)
+X_sale, y_sale = properties.load_reg(category='sale', return_X_y=True)
+
+X_rent_sets, y_rent_sets = scalesplit(X_rent, y_rent, sets=2, test_size=0.2)
+X_sale_sets, y_sale_sets = scalesplit(X_sale, y_sale, sets=2, test_size=0.2)
+
+models = [LinearRegressor, KNNRegressor, DTRegressor]
+
+rent_model_selector = ModelSelector(models, X_rent_sets[0], y_rent_sets[0])
+rent_model_selector.get_best_model(X_rent_sets, y_rent_sets)
+print(rent_model_selector.best_model_name,
+        rent_model_selector.best_model_params,
+        [(type(model).__name__, model.scores) for model in rent_model_selector.models.values()])
+

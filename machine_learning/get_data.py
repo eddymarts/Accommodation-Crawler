@@ -5,7 +5,7 @@ class Data:
     """ Class to represent the self.dataset. """
 
     def __init__(self) -> None:
-        self.dataset = pd.read_csv("properties.csv", index_col="id")
+        self.dataset = pd.read_csv("machine_learning/properties.csv", index_col="id")
         self.dataset.drop(axis=1, inplace=True, labels=["address","postcode",
             "country", "city", "google_maps", "agency", "agency_phone_number",
              "url", "pictures", "description", "updated_date"])
@@ -35,7 +35,7 @@ class Data:
         if category == 'rental':
             data = data[data["is_rental"]==True]
             data = data.drop(axis=1, inplace=False, labels=["is_rental", "price_for_sale"])
-            
+            data.dropna(how='any', inplace = True)
             if return_X_y:
                 return data[[
                         c for c in data.columns if c not in ["price_per_month_gbp"]
@@ -45,7 +45,7 @@ class Data:
         elif category == 'sale':
             data = data[data["is_rental"]==False]
             data = data.drop(axis=1, inplace=False, labels=["is_rental", "price_per_month_gbp"])
-            
+            data.dropna(how='any', inplace = True)
             if return_X_y:
                 return data[[
                         c for c in data.columns if c not in ["price_for_sale"]
