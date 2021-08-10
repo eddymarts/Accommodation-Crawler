@@ -12,7 +12,7 @@ class BaseModel:
         """ Turns hyperparameters of the model. """
         tuning_start = time.time()
         grid_search = GridSearchCV(estimator=self.model, param_grid=self.hyperparameters)
-        grid_search.fit(self.X, self.y)
+        grid_search.fit(X=self.X, y=self.y)
         tuning_end = time.time()
 
         self.tuning_time = tuning_end - tuning_start
