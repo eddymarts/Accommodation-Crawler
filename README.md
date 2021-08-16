@@ -82,6 +82,10 @@ select distinct substr(url,0,42) as url_root, count(*) from properties group by 
 ```
 
 ## Extension ideas
+- Drop property type
+- Reselect features and do more feature engineering.
+- Show train, test, val score per graph
+- Best params for each model. 
 - Further datasets/websites to scrape and add to the dataset
 - Time based data so that the same property can be scraped monthly to detect any pricing variations?
 - Frontend with metrics?

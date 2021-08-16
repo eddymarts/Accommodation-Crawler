@@ -54,5 +54,5 @@ for model in models:
 
 results = pd.DataFrame(results)
 print(results)
-results.to_csv("machine_learning/results.csv")
+# results.to_csv("machine_learning/results.csv")
 

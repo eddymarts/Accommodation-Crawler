@@ -41,6 +41,8 @@ class ModelSelector:
                 self.best_model_name = key
                 self.best_model_params = self.models[key].best_hyperparameters
                 self.best_model = self.models[key].best_model
+        
+        print(self.best_model_params)
             
 
     
