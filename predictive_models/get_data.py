@@ -1,11 +1,12 @@
 import pandas as pd
 from sklearn import preprocessing
+from pprint import pprint
 
 class Data:
     """ Class to represent the self.dataset. """
 
     def __init__(self) -> None:
-        self.dataset = pd.read_csv("machine_learning/properties.csv", index_col="id")
+        self.dataset = pd.read_csv("machine_learning/dataset.csv", index_col="id")
         self.dataset.drop(axis=1, inplace=True, labels=["address","postcode",
             "country", "city", "google_maps", "agency", "agency_phone_number",
              "url", "pictures", "description", "updated_date"])
@@ -27,7 +28,7 @@ class Data:
         self.dataset = pd.concat([self.dataset, oh_type], axis=1)
 
     def load_reg(self, category='rental', return_X_y=False):
-        """ Returns the data for predicting price for rental properties. """
+        """ Returns the data for predicting price for rental dataset. """
         data = self.dataset[[
                     c for c in self.dataset.columns if c not in ["price_per_month_gbp",
                         "price_for_sale"]] + ["price_per_month_gbp", "price_for_sale"]]
@@ -51,3 +52,28 @@ class Data:
                         c for c in data.columns if c not in ["price_for_sale"]
                         ]], data[["price_for_sale"]]
             return data
+    
+    def show(self, max_rows=6, max_columns=None):
+        """ Prints all columns of dataframe. """
+
+        with pd.option_context('display.max_rows', max_rows,
+                                'display.max_columns', max_columns):
+            pprint(self.dataset)
+
+    def describe(self, max_columns=None):
+        """ Prints describe() of all columns of dataframe. """
+
+        with pd.option_context('display.max_columns', max_columns):
+            print(self.dataset.describe())
+    
+    def info(self):
+        """ Prints dataframe.info() """
+
+        print(self.dataset.info())
+    
+    def analyse(self):
+        """ Prints relevant information about the dataframe. """
+
+        self.show()
+        self.describe()
+        self.info()
