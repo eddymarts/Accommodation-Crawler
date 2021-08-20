@@ -41,7 +41,7 @@ class RFRegressor(BaseModel):
 class SVRegressor(BaseModel):
     def __init__(self, X, y) -> None:
         self.model = SVR()
-        self.hyperparameters = {#'kernel': ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed'], 
+        self.hyperparameters = {'kernel': ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed'], 
                                 'degree': list(range(2, 10)),
                                 'gamma': ['scale', 'auto'],
                                 'coef0': list(range(100)),
@@ -54,7 +54,7 @@ class ANNRegressor(BaseModel):
     def __init__(self, X, y) -> None:
         self.model = MLPRegressor()
         self.hyperparameters = {'hidden_layer_sizes': [(100, 100, 100, 100, 100)],
-                                #'activation': ['identity', 'logistic', 'tanh', 'relu'],
-                                #'alpha': [num/10000 for num in range(1, 100)],
+                                'activation': ['identity', 'logistic', 'tanh', 'relu'],
+                                'alpha': [num/10000 for num in range(1, 100)],
                                 'max_iter': [1000]}
         super().__init__(X, y)
