@@ -4,11 +4,13 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
+from skorch import NeuralNetRegressor
+from neural_models import *
 from base import BaseModel
 
 class LinearRegressor(BaseModel):
     def __init__(self, X, y) -> None:
-        self.model = LinearRegression()
+        self.model = LinearRegressiClassifieron()
         self.hyperparameters = {'fit_intercept': [True, False], 
                                 'normalize': [True, False]}
         super().__init__(X, y)
@@ -50,11 +52,20 @@ class SVRegressor(BaseModel):
                                 'shrinking': [False, True]}
         super().__init__(X, y)
 
-class ANNRegressor(BaseModel):
+class MultilayerPerceptronRegressor(BaseModel):
     def __init__(self, X, y) -> None:
         self.model = MLPRegressor()
         self.hyperparameters = {'hidden_layer_sizes': [(100, 100, 100, 100, 100)],
                                 'activation': ['identity', 'logistic', 'tanh', 'relu'],
                                 'alpha': [num/10000 for num in range(1, 100)],
                                 'max_iter': [1000]}
+        super().__init__(X, y)
+
+class NeuralNetworkRegressor(BaseModel):
+    def __init__(self, X, y) -> None:
+        self.model = NeuralNetRegressor()
+        self.hyperparameters = {'module': [NeuralNetworkClassification],
+                                
+
+        }
         super().__init__(X, y)

@@ -50,7 +50,7 @@ class SVClassifier(BaseModel):
                                 'shrinking': [False, True]}
         super().__init__(X, y)
 
-class ANNClassifier(BaseModel):
+class MultilayerPerceptronClassifier(BaseModel):
     def __init__(self, X, y) -> None:
         self.model = MLPClassifier()
         self.hyperparameters = {'hidden_layer_sizes': [(100, 100, 100, 100, 100)],
