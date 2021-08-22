@@ -4,7 +4,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
-from models.base import BaseModel
+from machine_learning.base import BaseModel
 
 class LinearRegressor(BaseModel):
     def __init__(self, X, y) -> None:
