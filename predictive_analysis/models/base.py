@@ -1,5 +1,6 @@
 from sklearn.model_selection import GridSearchCV
 import time
+import torch
 
 class BaseModel:
     def __init__(self, X, y) -> None:
@@ -7,7 +8,6 @@ class BaseModel:
         self.y = y
         self.tune()
         
-    
     def tune(self):
         """ Turns hyperparameters of the model. """
         tuning_start = time.time()
@@ -44,6 +44,24 @@ class ModelSelector:
         
         print(self.best_model_params)
             
+class BaseNetwork(torch.nn.Module):
+    """
+    Abstract class for Neural Network model.
+    implemented from torch.nn.Module.
+    Only accepts numerical features.
 
+    Must implement:
+    - layers attribute
+    - get_loss method
     
-
+    Methods created to match the ones used by Sci-kit Learn models.
+    """
+    def __init__(self):
+        super().__init__()
+        
+    def forward(self, X):
+        """
+        Predicts the value of an output for each row of X
+        using the model.
+        """
+        return self.layers(X)

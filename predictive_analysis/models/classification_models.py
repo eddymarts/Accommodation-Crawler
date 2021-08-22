@@ -4,7 +4,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
-from machine_learning.base import BaseModel
+from base import BaseModel
 
 class LogisticRegressor(BaseModel):
     def __init__(self, X, y) -> None:
