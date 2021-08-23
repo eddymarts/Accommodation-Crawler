@@ -42,6 +42,59 @@ class LogisticRegression(BinaryLogisticRegression):
             torch.nn.Linear(n_features, n_labels), 
             torch.nn.Softmax(1))
 
+class CustomNetRegression(torch.nn.Module):
+    def __init__(self, n_features, n_labels, num_layers=10, neuron_incr=10, 
+                dropout=0.5, batchnorm=False):
+        super().__init__()
+        self.layers = self.get_layers(n_features, n_labels, num_layers,
+                                        neuron_incr, dropout, batchnorm)
+    
+    def forward(self, X):
+        for layer in self.layers:
+            X = layer(X)
+        
+        return X
+    
+    def get_layers(n_features, n_labels, num_layers, neuron_incr, dropout, batchnorm):
+        current_neurons = n_features
+        layers = []
+
+        for layer in range(num_layers):
+            if layer <= round(num_layers/2):
+                next_neurons = current_neurons+neuron_incr
+            else:
+                next_neurons = current_neurons-neuron_incr
+
+            if batchnorm:
+                layers.append(torch.nn.BatchNorm1d(current_neurons))
+
+            layers.append(torch.nn.Linear(current_neurons, next_neurons))
+            layers.append(torch.nn.ReLU())
+            layers.append(torch.nn.Dropout(p=dropout))
+            current_neurons = next_neurons
+        
+        print(current_neurons)
+
+        if batchnorm:
+            layers.append(torch.nn.BatchNorm1d(current_neurons))
+        layers.append(torch.nn.Linear(current_neurons, n_labels))
+
+        return layers
+
+class CustomNetBiClassification(CustomNetRegression):
+    def __init__(self, n_features, n_labels, num_layers=10, neuron_incr=10,
+                dropout=0.5, batchnorm=False):
+        super().__init__(n_features, n_labels, num_layers=num_layers,
+                neuron_incr=neuron_incr, dropout=dropout, batchnorm=batchnorm)
+        self.layers.append(torch.nn.Sigmoid())
+
+class CustomNetClassification(CustomNetRegression):
+    def __init__(self, n_features, n_labels, num_layers=10, neuron_incr=10,
+                dropout=0.5, batchnorm=False):
+        super().__init__(n_features, n_labels, num_layers=num_layers,
+                neuron_incr=neuron_incr, dropout=dropout, batchnorm=batchnorm)
+        self.layers.append(torch.nn.Softmax(1))
+
 class NeuralNetworkRegression(LinearRegression):
     def __init__(self, n_features, n_labels):
         super().__init__(n_features, n_labels)

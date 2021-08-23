@@ -10,7 +10,7 @@ from base import BaseModel
 
 class LinearRegressor(BaseModel):
     def __init__(self, X, y) -> None:
-        self.model = LinearRegressiClassifieron()
+        self.model = LinearRegression()
         self.hyperparameters = {'fit_intercept': [True, False], 
                                 'normalize': [True, False]}
         super().__init__(X, y)
@@ -64,8 +64,15 @@ class MultilayerPerceptronRegressor(BaseModel):
 class NeuralNetworkRegressor(BaseModel):
     def __init__(self, X, y) -> None:
         self.model = NeuralNetRegressor()
-        self.hyperparameters = {'module': [NeuralNetworkClassification],
-                                
+        self.hyperparameters = {'module': [CustomNetRegression],
+                                'optimizer': [torch.optim.Adadelta, torch.optim.Adagrad,
+                                            torch.optim.Adam, torch.optim.Adamax,
+                                            torch.optim.AdamW, torch.optim.SparseAdam,
+                                            torch.optim.LBFGS, torch.optim.RMSprop,
+                                            torch.optim.Rprop, torch.optim.ASGD,
+                                            torch.optim.SGD]
+
+
 
         }
         super().__init__(X, y)
