@@ -4,6 +4,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
+from skorch.classifier import NeuralNetClassifier
+from neural_models import *
 from base import BaseModel
 
 class LogisticRegressor(BaseModel):
@@ -57,4 +59,39 @@ class MultilayerPerceptronClassifier(BaseModel):
                                 'activation': ['identity', 'logistic', 'tanh', 'relu'],
                                 'alpha': [num/10000 for num in range(1, 100)],
                                 'max_iter': [1000]}
+        super().__init__(X, y)
+
+
+
+class SDGNetworkClassifier(BaseModel):
+    def __init__(self, X, y) -> None:
+        self.model = NeuralNetClassifier(module=CustomNetRegression,
+                                        optimizer=torch.optim.SGD,
+                                        max_epochs=1000)
+        self.hyperparameters = {'batch_size': [2**batch for batch in range(4, 11)],
+                                'lr': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__momentum': [num/10 for num in range(10)],
+                                'optimizer__dampening': [num/10 for num in range(10)],
+                                'optimizer__weight_decay': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__nesterov': [False, True],
+                                'module__num_layers': [2**num for num in range(1, 7)],
+                                'module__neuron_incr': [range(11)],
+                                'module__dropout': [num/10 for num in range(10)],
+                                'module__batchnorm': [False, True]}
+        super().__init__(X, y)
+
+class AdamNetworkClassifier(BaseModel):
+    def __init__(self, X, y) -> None:
+        self.model = NeuralNetClassifier(module=CustomNetClassification,
+                                        optimizer=torch.optim.Adam,
+                                        max_epochs=1000)
+        self.hyperparameters = {'batch_size': [2**batch for batch in range(4, 11)],
+                                'lr': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__betas': [(num1/100, num2/1000) for num1, num2 in zip(range(80, 100), range(809, 1000, 10))],
+                                'optimizer__weight_decay': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__amsgrad': [False, True],
+                                'module__num_layers': [2**num for num in range(1, 7)],
+                                'module__neuron_incr': [range(11)],
+                                'module__dropout': [num/10 for num in range(10)],
+                                'module__batchnorm': [False, True]}
         super().__init__(X, y)
