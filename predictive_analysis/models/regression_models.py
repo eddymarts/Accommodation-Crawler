@@ -4,7 +4,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
-from skorch import NeuralNetRegressor
+from skorch.regressor import NeuralNetRegressor
 from neural_models import *
 from base import BaseModel
 
@@ -61,18 +61,35 @@ class MultilayerPerceptronRegressor(BaseModel):
                                 'max_iter': [1000]}
         super().__init__(X, y)
 
-class NeuralNetworkRegressor(BaseModel):
+class SDGNetworkRegressor(BaseModel):
     def __init__(self, X, y) -> None:
-        self.model = NeuralNetRegressor()
-        self.hyperparameters = {'module': [CustomNetRegression],
-                                'optimizer': [torch.optim.Adadelta, torch.optim.Adagrad,
-                                            torch.optim.Adam, torch.optim.Adamax,
-                                            torch.optim.AdamW, torch.optim.SparseAdam,
-                                            torch.optim.LBFGS, torch.optim.RMSprop,
-                                            torch.optim.Rprop, torch.optim.ASGD,
-                                            torch.optim.SGD]
+        self.model = NeuralNetRegressor(module=CustomNetRegression,
+                                        optimizer=torch.optim.SGD,
+                                        max_epochs=1000)
+        self.hyperparameters = {'batch_size': [2**batch for batch in range(4, 11)],
+                                'lr': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__momentum': [num/10 for num in range(10)],
+                                'optimizer__dampening': [num/10 for num in range(10)],
+                                'optimizer__weight_decay': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__nesterov': [False, True],
+                                'module__num_layers': [2**num for num in range(1, 7)],
+                                'module__neuron_incr': [range(11)],
+                                'module__dropout': [num/10 for num in range(10)],
+                                'module__batchnorm': [False, True]}
+        super().__init__(X, y)
 
-
-
-        }
+class AdamNetworkRegressor(BaseModel):
+    def __init__(self, X, y) -> None:
+        self.model = NeuralNetRegressor(module=CustomNetRegression,
+                                        optimizer=torch.optim.Adam,
+                                        max_epochs=1000)
+        self.hyperparameters = {'batch_size': [2**batch for batch in range(4, 11)],
+                                'lr': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__betas': [(num1/100, num2/1000) for num1, num2 in zip(range(80, 100), range(809, 1000, 10))],
+                                'optimizer__weight_decay': [0.0001 * 10**num for num in range(4)],
+                                'optimizer__amsgrad': [False, True],
+                                'module__num_layers': [2**num for num in range(1, 7)],
+                                'module__neuron_incr': [range(11)],
+                                'module__dropout': [num/10 for num in range(10)],
+                                'module__batchnorm': [False, True]}
         super().__init__(X, y)
