@@ -5,12 +5,14 @@ from pprint import pprint
 class Data:
     """ Class to represent the self.dataset. """
 
-    def __init__(self) -> None:
+    def __init__(self, one_hot=False) -> None:
         self.dataset = pd.read_csv("machine_learning/dataset.csv", index_col="id")
         self.dataset.drop(axis=1, inplace=True, labels=["address","postcode",
             "country", "city", "google_maps", "agency", "agency_phone_number",
              "url", "pictures", "description", "updated_date"])
-        self._one_hot_property_type()
+        
+        if one_hot:
+            self._one_hot_property_type()
     
     def _one_hot_property_type(self):
         """ Parses property type through one hot encoding. """
@@ -26,6 +28,31 @@ class Data:
 
         self.dataset.drop(axis=1, inplace=True, labels=["property_type"])
         self.dataset = pd.concat([self.dataset, oh_type], axis=1)
+
+    def load_class(self, category='rental', return_X_y=False):
+        """ Returns the data for predicting price for rental dataset. """
+        data = self.dataset[[
+                    c for c in self.dataset.columns if c not in ["property_type"]] + ["property_type"]]
+
+        if category == 'rental':
+            data = data[data["is_rental"]==True]
+            data = data.drop(axis=1, inplace=False, labels=["is_rental", "price_for_sale"])
+            data.dropna(how='any', inplace = True)
+            if return_X_y:
+                return data[[
+                        c for c in data.columns if c not in ["property_type"]
+                        ]], data[["property_type"]]
+            return data
+
+        elif category == 'sale':
+            data = data[data["is_rental"]==False]
+            data = data.drop(axis=1, inplace=False, labels=["is_rental", "price_per_month_gbp"])
+            data.dropna(how='any', inplace = True)
+            if return_X_y:
+                return data[[
+                        c for c in data.columns if c not in ["property_type"]
+                        ]], data[["property_type"]]
+            return data
 
     def load_reg(self, category='rental', return_X_y=False):
         """ Returns the data for predicting price for rental dataset. """
