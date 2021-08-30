@@ -1,4 +1,5 @@
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import *
 import time
 import torch
 
@@ -22,9 +23,13 @@ class BaseModel:
 
     def score(self, X_sets, y_sets):
         """ Returns the score of the tuned model for every set of the data. """
-        self.scores = {}
+        self.scores = {"accuracy": {}, "f1": {}, "log_loss": {}}
+        y_pred_sets = {}
         for set in range(len(X_sets)):
-            self.scores[set] = self.best_model.score(X_sets[set], y_sets[set])
+            y_pred_sets[set] = self.best_model.predict(X_sets[set])
+            self.scores["accuracy"][set] = accuracy_score(y_sets[set], y_pred_sets[set])
+            self.scores["f1"][set] = f1_score(y_sets[set], y_pred_sets[set])
+            self.scores["cross_entropy"][set] = log_loss(y_sets[set], y_pred_sets[set])
 
 class ModelSelector:
     def __init__(self, models, X, y) -> None:
@@ -36,8 +41,8 @@ class ModelSelector:
         for key in self.models.keys():
             self.models[key].score(X_sets, y_sets)
 
-            if self.models[key].scores[1] > max_score:
-                max_score = self.models[key].scores[1]
+            if self.models[key].scores["accuracy"][1] > max_score:
+                max_score = self.models[key].scores["accuracy"][1]
                 self.best_model_name = key
                 self.best_model_params = self.models[key].best_hyperparameters
                 self.best_model = self.models[key].best_model
