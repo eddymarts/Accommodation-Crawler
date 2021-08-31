@@ -140,3 +140,6 @@ dmypy.json
 
 # EC2 Keys
 *.pem
+
+# Models
+*.pkl
