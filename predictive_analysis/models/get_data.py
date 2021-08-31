@@ -5,14 +5,41 @@ from pprint import pprint
 class Data:
     """ Class to represent the self.dataset. """
 
-    def __init__(self, one_hot=False) -> None:
-        self.dataset = pd.read_csv("machine_learning/dataset.csv", index_col="id")
+    def __init__(self, one_hot=False, ordinal=False) -> None:
+        self.dataset = pd.read_csv("predictive_analysis/properties.csv", index_col="id")
         self.dataset.drop(axis=1, inplace=True, labels=["address","postcode",
             "country", "city", "google_maps", "agency", "agency_phone_number",
              "url", "pictures", "description", "updated_date"])
         
         if one_hot:
             self._one_hot_property_type()
+        
+        if ordinal:
+            self._ordinal_property_type()
+    
+    def _ordinal_property_type(self):
+        """ Parses property type through ordinal encoding. """
+        self.dataset["property_type"].replace({"Detached house": "House",
+                                            "Semi-detached house": "House",
+                                            "Shared accommodation": "Room",
+                                            "Terraced house": "House",
+                                            "Maisonette": "House",
+                                            "Detached bungalow": "Bungalow",
+                                            "End terrace house": "House",
+                                            "Town house": "House",
+                                            "Duplex": "Block",
+                                            "Semi-detached bungalow": "Bungalow",
+                                            "Link-detached house": "House",
+                                            "Block of flats": "Block",
+                                            "Mews house": "Flat",
+                                            "Country house": "House",
+                                            "Terraced bungalow": "Bungalow",
+                                            "Triplex": "Block",
+                                            "Farmhouse": "Farm"}, inplace=True)
+        
+        ordinal_encoder = preprocessing.OrdinalEncoder()
+        ordinal_encoder.fit(self.dataset[["property_type"]])
+        self.dataset["property_type"] = ordinal_encoder.transform(self.dataset[["property_type"]])
     
     def _one_hot_property_type(self):
         """ Parses property type through one hot encoding. """
@@ -33,7 +60,7 @@ class Data:
         """ Returns the data for predicting price for rental dataset. """
         data = self.dataset[[
                     c for c in self.dataset.columns if c not in ["property_type"]] + ["property_type"]]
-
+        
         if category == 'rental':
             data = data[data["is_rental"]==True]
             data = data.drop(axis=1, inplace=False, labels=["is_rental", "price_for_sale"])
@@ -41,7 +68,7 @@ class Data:
             if return_X_y:
                 return data[[
                         c for c in data.columns if c not in ["property_type"]
-                        ]], data[["property_type"]]
+                        ]], data[["property_type"]], data["property_type"].unique()
             return data
 
         elif category == 'sale':

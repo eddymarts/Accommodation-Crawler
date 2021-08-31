@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from base import BaseNetwork
+from models.base import BaseNetwork
 
 class LinearRegression(BaseNetwork):
     """
@@ -43,27 +43,26 @@ class LogisticRegression(BinaryLogisticRegression):
             torch.nn.Softmax(1))
 
 class CustomNetRegression(torch.nn.Module):
-    def __init__(self, n_features, n_labels, num_layers=10, neuron_incr=10, 
+    def __init__(self, n_features=11, n_labels=1, num_layers=10, neuron_incr=10, 
                 dropout=0.5, batchnorm=False):
         super().__init__()
-        self.layers = self.get_layers(n_features, n_labels, num_layers,
-                                        neuron_incr, dropout, batchnorm)
+        self.layers = torch.nn.ModuleList(self.get_layers(n_features, n_labels, num_layers,
+                                        neuron_incr, dropout, batchnorm))
     
     def forward(self, X):
         for layer in self.layers:
             X = layer(X)
-        
         return X
     
-    def get_layers(n_features, n_labels, num_layers, neuron_incr, dropout, batchnorm):
+    def get_layers(self, n_features, n_labels, num_layers, neuron_incr, dropout, batchnorm):
         current_neurons = n_features
         layers = []
 
         for layer in range(num_layers):
             if layer <= round(num_layers/2):
-                next_neurons = current_neurons+neuron_incr
+                next_neurons = current_neurons + neuron_incr
             else:
-                next_neurons = current_neurons-neuron_incr
+                next_neurons = current_neurons - neuron_incr
 
             if batchnorm:
                 layers.append(torch.nn.BatchNorm1d(current_neurons))
@@ -86,14 +85,16 @@ class CustomNetBiClassification(CustomNetRegression):
                 dropout=0.5, batchnorm=False):
         super().__init__(n_features, n_labels, num_layers=num_layers,
                 neuron_incr=neuron_incr, dropout=dropout, batchnorm=batchnorm)
-        self.layers.append(torch.nn.Sigmoid())
+        self.layers = torch.nn.ModuleList(self.get_layers(n_features, n_labels, num_layers,
+                                        neuron_incr, dropout, batchnorm) + [torch.nn.Sigmoid()])
 
 class CustomNetClassification(CustomNetRegression):
     def __init__(self, n_features, n_labels, num_layers=10, neuron_incr=10,
                 dropout=0.5, batchnorm=False):
         super().__init__(n_features, n_labels, num_layers=num_layers,
                 neuron_incr=neuron_incr, dropout=dropout, batchnorm=batchnorm)
-        self.layers.append(torch.nn.Softmax(1))
+        self.layers = torch.nn.ModuleList(self.get_layers(n_features, n_labels, num_layers,
+                                        neuron_incr, dropout, batchnorm) + [torch.nn.Softmax(1)])
 
 class NeuralNetworkRegression(LinearRegression):
     def __init__(self, n_features, n_labels):

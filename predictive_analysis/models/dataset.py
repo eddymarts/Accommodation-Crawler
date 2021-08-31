@@ -30,7 +30,7 @@ class NumpyDataset:
       self.normalize()
 
     if split:
-      self.split(seed)
+      self.split(seed=seed)
   
   def __getitem__(self, idx):
     return self.X[idx], self.y[idx]
@@ -54,28 +54,28 @@ class NumpyDataset:
       return self.sc.transform(data)
 
   def split(self, X=None, y=None, test_size=0.25, sets=2, shuffle=True, seed=None):
-    if X == None:
-      features = self.X
+    if X is None:
+      X_train = self.X
     else:
-      features = X
+      X_train = X
 
-    if y == None:
-      labels = self.y
+    if y is None:
+      y_train = self.y
     else:
-      labels = y
+      y_train = y
 
     X_sets = {}
     y_sets = {}
     for set in range(sets):
-        X, X_test, y, y_test = train_test_split(features, labels, test_size=test_size, 
+        X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=test_size, 
                                         shuffle=shuffle, random_state=seed)
-        X_sets[0] = X
+        X_sets[0] = X_train
         X_sets[set+1] = X_test
-        y_sets[0] = np.array(y).reshape(-1,)
+        y_sets[0] = np.array(y_train).reshape(-1,)
         y_sets[set+1] = np.array(y_test).reshape(-1,)
         print(y_sets[0].shape, y_sets[set+1].shape)
     
-    if X == None and y == None:
+    if X is None and y is None:
       self.X_sets = X_sets
       self.y_sets = y_sets
     
