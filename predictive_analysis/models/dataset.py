@@ -47,7 +47,6 @@ class NumpyDataset:
 
   def normalize(self, data=None):
     if data == None:
-      self.X_raw = self.X
       self.X = self.sc.transform(self.X)
       return self.X
     else:
@@ -96,12 +95,14 @@ class TorchDataset(Dataset):
       self.n_features = 1
       self.X = torch.Tensor(X.reshape(-1, self.n_features)).float()
 
-    if len(y.shape) > 1:
-      self.n_labels = y.shape[1]
-      self.y = torch.Tensor(y).float()
-    else:
-      self.n_labels = 1
-      self.y = torch.Tensor(y.reshape(-1, self.n_labels)).float()
+    self.n_labels = 1
+    self.y = torch.Tensor(y.reshape(-1)).long()
+    # if len(y.shape) > 1:
+    #   self.n_labels = y.shape[1]
+    #   self.y = torch.Tensor(y).float()
+    # else:
+    #   self.n_labels = 1
+    #   self.y = torch.Tensor(y.reshape(-1, self.n_labels)).float()
 
     self.mean = torch.mean(self.X, axis=0)
     self.std = torch.std(self.X, axis=0)

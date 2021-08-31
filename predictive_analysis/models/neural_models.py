@@ -43,13 +43,15 @@ class LogisticRegression(BinaryLogisticRegression):
             torch.nn.Softmax(1))
 
 class CustomNetRegression(torch.nn.Module):
-    def __init__(self, n_features=11, n_labels=1, num_layers=10, neuron_incr=10, 
+    def __init__(self, n_features, n_labels, num_layers=10, neuron_incr=10, 
                 dropout=0.5, batchnorm=False):
         super().__init__()
         self.layers = torch.nn.ModuleList(self.get_layers(n_features, n_labels, num_layers,
                                         neuron_incr, dropout, batchnorm))
+        self.n_features = n_features
     
     def forward(self, X):
+        X = X.reshape(-1, self.n_features)
         for layer in self.layers:
             X = layer(X)
         return X
@@ -89,7 +91,7 @@ class CustomNetBiClassification(CustomNetRegression):
                                         neuron_incr, dropout, batchnorm) + [torch.nn.Sigmoid()])
 
 class CustomNetClassification(CustomNetRegression):
-    def __init__(self, n_features, n_labels, num_layers=10, neuron_incr=10,
+    def __init__(self, n_features=11, n_labels=16, num_layers=10, neuron_incr=10,
                 dropout=0.5, batchnorm=False):
         super().__init__(n_features, n_labels, num_layers=num_layers,
                 neuron_incr=neuron_incr, dropout=dropout, batchnorm=batchnorm)
