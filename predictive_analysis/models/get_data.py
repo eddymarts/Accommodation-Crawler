@@ -6,7 +6,8 @@ class Data:
     """ Class to represent the self.dataset. """
 
     def __init__(self, one_hot=False, ordinal=False) -> None:
-        self.dataset = pd.read_csv("predictive_analysis/properties.csv", index_col="id")
+        # self.dataset = pd.read_csv("predictive_analysis/properties.csv", index_col="id")
+        self.dataset = pd.read_csv("/content/drive/MyDrive/Profesional/AiCore/Projects/Accommodation-Crawler/predictive_analysis/properties.csv", index_col="id")
         self.dataset.drop(axis=1, inplace=True, labels=["address","postcode",
             "country", "city", "google_maps", "agency", "agency_phone_number",
              "url", "pictures", "description", "updated_date"])
