@@ -19,17 +19,20 @@ neural_models = [SGDNetworkClassifier]
 
 for simple_model in simple_models:
     model = simple_model(rent_np.X_sets[0], rent_np.y_sets[0])
-    with open(f"predictive_analysis/models/rent/classifiers/simple/{simple_model.__name__}.pkl", 'wb') as f:
+    # with open(f"predictive_analysis/models/rent/classifiers/simple/{simple_model.__name__}.pkl", 'wb') as f:
+    with open(f"/content/drive/MyDrive/Profesional/AiCore/Projects/Accommodation-Crawler/predictive_analysis/models/rent/classifiers/simple/{simple_model.__name__}.pkl", 'wb') as f:
         pickle.dump(model.best_model, f)
     
     results = pd.DataFrame(model.results, index=[simple_model.__name__])
-    results.to_csv(f"predictive_analysis/models/rent/classifiers/simple/{simple_model.__name__}_params.csv")
+    results.to_csv(f"/content/drive/MyDrive/Profesional/AiCore/Projects/Accommodation-Crawler/predictive_analysis/models/rent/classifiers/simple/{simple_model.__name__}_params.csv")
 
 for neural_model in neural_models:
     model = neural_model(rent_torch.X, rent_torch.y)
-    with open(f"predictive_analysis/models/rent/classifiers/neural/{neural_model.__name__}.pkl", 'wb') as f:
+    # with open(f"predictive_analysis/models/rent/classifiers/neural/{neural_model.__name__}.pkl", 'wb') as f:
+    with open(f"/content/drive/MyDrive/Profesional/AiCore/Projects/Accommodation-Crawler/predictive_analysis/models/rent/classifiers/neural/{neural_model.__name__}.pkl", 'wb') as f:
         pickle.dump(model.best_model, f)
     
     results = pd.DataFrame(model.results, index=[neural_model.__name__])
-    results.to_csv(f"predictive_analysis/models/rent/classifiers/neural/{neural_model.__name__}_params.csv")
+    # results.to_csv(f"predictive_analysis/models/rent/classifiers/neural/{neural_model.__name__}_params.csv")
+    results.to_csv(f"/content/drive/MyDrive/Profesional/AiCore/Projects/Accommodation-Crawler/predictive_analysis/models/rent/classifiers/neural/{neural_model.__name__}_params.csv")
 
