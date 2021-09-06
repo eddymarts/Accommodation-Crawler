@@ -3,6 +3,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import torch
 from torch.utils.data import *
+from multiprocessing import cpu_count
 
 class NumpyDataset:
   def __init__(self, X, y, one_hot_target=False, split=False, 
