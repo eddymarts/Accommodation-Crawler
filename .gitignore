@@ -60,6 +60,7 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.sqlite3
 
 # Flask stuff:
 instance/
@@ -127,3 +128,18 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Databases
+.vscode/settings.json
+*.sqlite3
+*.jpg
+
+# Datasets
+*.csv
+*.txt
+
+# EC2 Keys
+*.pem
+
+# Models
+*.pkl
